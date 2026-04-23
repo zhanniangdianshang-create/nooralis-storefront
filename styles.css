@@ -702,15 +702,45 @@ h3 {
   border: 0;
 }
 
-.paypal-container {
+.checkout-provider {
+  display: grid;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.checkout-provider-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.checkout-provider strong {
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.checkout-provider-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.checkout-action-slot {
   min-height: 48px;
 }
 
-.paypal-container.is-disabled {
-  min-height: 54px;
-  background: #f2eadb;
-  border: 1px dashed #d2c3a5;
-  border-radius: var(--radius);
+.checkout-button {
+  width: 100%;
+}
+
+.checkout-button.is-disabled {
+  color: #3f5d60;
+  background: #cfe0dd;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .checkout-form input,

@@ -3,6 +3,9 @@ node_modules/
 npm-debug.log*
 .DS_Store
 screenshot-*.png
+paypal-*.png
+paypal-*.json
+paypal-*.err
 nooralis-deploy.zip
 fix-codex-network.ps1
 gh-login-*.txt
@@ -10,3 +13,5 @@ render-login-*.txt
 vercel-login-*.txt
 .tools/
 .vercel/
+
+.vercel

@@ -4,6 +4,9 @@ node_modules
 .env
 *.zip
 screenshot-*.png
+paypal-*.png
+paypal-*.json
+paypal-*.err
 render-login-*.txt
 vercel-login-*.txt
 fix-codex-network.ps1

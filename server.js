@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
+const { getCheckoutSettings } = require("./api/_checkout");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -99,8 +100,11 @@ async function generatePayPalAccessToken() {
 }
 
 app.get("/healthz", (request, response) => {
+  const checkoutSettings = getCheckoutSettings();
   response.json({
     status: "ok",
+    checkoutProvider: checkoutSettings.provider,
+    checkoutConfigured: checkoutSettings.configured,
     paypalConfigured: Boolean(paypalClientId && paypalClientSecret),
     paypalEnvironment,
     currency
@@ -135,6 +139,10 @@ app.get("/api/paypal/config", (request, response) => {
     environment: paypalEnvironment,
     configured: Boolean(paypalClientId && paypalClientSecret)
   });
+});
+
+app.get("/api/checkout/config", (request, response) => {
+  response.json(getCheckoutSettings());
 });
 
 app.post("/api/paypal/orders", async (request, response) => {
@@ -255,8 +263,11 @@ app.get(Array.from(publicFiles.keys()), (request, response) => {
 });
 
 app.listen(port, () => {
+  const checkoutSettings = getCheckoutSettings();
   console.log(`Nooralis storefront running at http://localhost:${port}`);
-  if (!paypalClientId || !paypalClientSecret) {
-    console.log("PayPal is not configured. Add PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET to enable checkout.");
+  if (!checkoutSettings.configured) {
+    console.log(
+      `${checkoutSettings.providerName} checkout is not configured. Add HOSTED_CHECKOUT_URL or working gateway credentials to enable online payments.`
+    );
   }
 });

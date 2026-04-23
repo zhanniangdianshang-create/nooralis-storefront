@@ -148,15 +148,17 @@
               Email for checkout
               <input type="email" name="email" autocomplete="email" placeholder="you@example.com">
             </label>
-            <div class="paypal-container full" id="paypal-button-container"></div>
+            <div class="checkout-provider full">
+              <span class="checkout-provider-label">Secure checkout</span>
+              <strong id="checkout-provider-name">Loading payment options...</strong>
+              <p class="checkout-provider-copy" id="checkout-provider-copy">
+                Checking the best payment route for your region.
+              </p>
+            </div>
+            <div class="checkout-action-slot full" id="checkout-action-container"></div>
             <p class="form-note checkout-note" id="checkout-note" role="status" aria-live="polite"></p>
           </form>
-          <div class="payment-badges" aria-label="Payment features">
-            <span>PayPal</span>
-            <span>Card via PayPal</span>
-            <span>Buyer protection</span>
-            <span>Global checkout</span>
-          </div>
+          <div class="payment-badges" id="payment-badges" aria-label="Payment features"></div>
         </div>
       </section>
 
