@@ -1,0 +1,19 @@
+{
+  "name": "nooralis-storefront",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nooralis LED bionic butterfly drone storefront with PayPal Checkout.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check server.js && node --check script.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
