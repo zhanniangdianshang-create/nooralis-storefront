@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Submit Order Details | Nooralis</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <main class="status-page">
+      <section class="status-card order-details-card">
+        <a class="brand" href="index.html" aria-label="Nooralis home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Nooralis</span>
+        </a>
+        <p class="section-kicker">After payment</p>
+        <h1>Send your shipping details.</h1>
+        <p class="order-details-intro">
+          After you complete PayPal.Me payment, fill in the details below so our team can match the payment and prepare your Nooralis order.
+        </p>
+        <div class="order-reference-box" aria-label="Order reference">
+          <span class="checkout-provider-label">Reference</span>
+          <strong id="order-reference-display">Preparing reference...</strong>
+        </div>
+        <form class="quote-form order-details-form" id="payment-details-form">
+          <label>
+            Full name
+            <input type="text" name="fullName" autocomplete="name" required>
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+          <label>
+            Phone or WhatsApp
+            <input type="text" name="phone" autocomplete="tel" required>
+          </label>
+          <label>
+            Country / region
+            <input type="text" name="country" autocomplete="country-name" required>
+          </label>
+          <label>
+            City / state
+            <input type="text" name="city" autocomplete="address-level2" required>
+          </label>
+          <label>
+            Postal code
+            <input type="text" name="postalCode" autocomplete="postal-code">
+          </label>
+          <label>
+            Wing color
+            <select name="color" required>
+              <option>Golden</option>
+              <option>Pink-Purple</option>
+              <option>Blue</option>
+              <option>Red</option>
+              <option>Custom color inquiry</option>
+            </select>
+          </label>
+          <label>
+            Version
+            <select name="variant" required>
+              <option>LED performance version</option>
+              <option>Standard non-LED version</option>
+            </select>
+          </label>
+          <label>
+            Quantity
+            <input type="number" name="quantity" min="1" max="20" value="1" required>
+          </label>
+          <label>
+            PayPal payer email
+            <input type="email" name="paypalPayerEmail" autocomplete="email" placeholder="The email used in PayPal">
+          </label>
+          <label class="full">
+            Shipping address
+            <textarea name="address" rows="3" autocomplete="street-address" required></textarea>
+          </label>
+          <label class="full">
+            PayPal transaction ID
+            <input type="text" name="paypalTransactionId" placeholder="Paste the PayPal transaction ID or payer name" required>
+          </label>
+          <label class="full">
+            Order notes
+            <textarea
+              name="notes"
+              rows="5"
+              placeholder="Add event date, preferred delivery timing, custom wing requests, or anything else our team should know."
+            ></textarea>
+          </label>
+          <button class="primary-button full" type="submit">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13Zm3.1.3 5.9 4.5 5.9-4.5a1 1 0 0 0-.4-.1h-13a1 1 0 0 0-.4.1ZM19 8l-6.4 4.9a1 1 0 0 1-1.2 0L5 8v10.5c0 .3.2.5.5.5h13c.3 0 .5-.2.5-.5V8Z"/>
+            </svg>
+            Send Paid Order Details
+          </button>
+          <button class="secondary-button full" id="copy-order-summary" type="button">Copy Order Summary</button>
+          <p class="form-note" id="payment-details-note" role="status" aria-live="polite"></p>
+        </form>
+        <p class="order-details-help">
+          If your email app does not open, use the copy button above and send the summary to
+          <a id="support-email-link" href="mailto:sales@nooraliswings.com">sales@nooraliswings.com</a>.
+        </p>
+        <a class="secondary-button order-details-back" href="index.html#order">Back to Store</a>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const config = window.NOORALIS_CONFIG || {};
+        const form = document.querySelector("#payment-details-form");
+        const note = document.querySelector("#payment-details-note");
+        const copyButton = document.querySelector("#copy-order-summary");
+        const referenceDisplay = document.querySelector("#order-reference-display");
+        const supportEmailLink = document.querySelector("#support-email-link");
+        const supportEmail = config.supportEmail || "sales@nooraliswings.com";
+        const storageKey = "nooralisCheckoutDraft";
+        const referenceKey = "nooralisOrderReference";
+
+        supportEmailLink.href = "mailto:" + supportEmail;
+        supportEmailLink.textContent = supportEmail;
+
+        function createReference() {
+          const now = new Date();
+          const stamp = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0")
+          ].join("");
+          const random = Math.random().toString(36).slice(2, 7).toUpperCase();
+          return "NRL-" + stamp + "-" + random;
+        }
+
+        function getReference() {
+          try {
+            const existing = window.sessionStorage.getItem(referenceKey);
+            if (existing) {
+              return existing;
+            }
+            const reference = createReference();
+            window.sessionStorage.setItem(referenceKey, reference);
+            return reference;
+          } catch {
+            return createReference();
+          }
+        }
+
+        const orderReference = getReference();
+        referenceDisplay.textContent = orderReference;
+
+        function loadDraft() {
+          try {
+            const raw = window.sessionStorage.getItem(storageKey);
+            return raw ? JSON.parse(raw) : {};
+          } catch {
+            return {};
+          }
+        }
+
+        function fillFormFromDraft() {
+          const draft = loadDraft();
+          if (!draft || typeof draft !== "object") {
+            return;
+          }
+
+          if (draft.email && form.elements.email && !form.elements.email.value) {
+            form.elements.email.value = draft.email;
+          }
+          if (draft.color && form.elements.color) {
+            form.elements.color.value = draft.color;
+          }
+          if (draft.variant && form.elements.variant) {
+            form.elements.variant.value = draft.variant;
+          }
+          if (draft.quantity && form.elements.quantity) {
+            form.elements.quantity.value = draft.quantity;
+          }
+        }
+
+        function buildSummary() {
+          const data = new FormData(form);
+          return [
+            "Paid Nooralis order details",
+            "",
+            "Reference: " + orderReference,
+            "Payment method: PayPal.Me",
+            "Product: Nooralis LED Bionic Butterfly Drone",
+            "Version: " + data.get("variant"),
+            "Wing color: " + data.get("color"),
+            "Quantity: " + data.get("quantity"),
+            "",
+            "Buyer details",
+            "Full name: " + data.get("fullName"),
+            "Email: " + data.get("email"),
+            "Phone / WhatsApp: " + data.get("phone"),
+            "Country / region: " + data.get("country"),
+            "City / state: " + data.get("city"),
+            "Postal code: " + (data.get("postalCode") || "Not provided"),
+            "Shipping address: " + data.get("address"),
+            "",
+            "Payment proof",
+            "PayPal payer email: " + (data.get("paypalPayerEmail") || "Not provided"),
+            "PayPal transaction ID: " + data.get("paypalTransactionId"),
+            "",
+            "Notes:",
+            data.get("notes") || "No additional notes."
+          ].join("\n");
+        }
+
+        fillFormFromDraft();
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const subject = "Paid Nooralis order - " + orderReference;
+          const body = buildSummary();
+          note.textContent = "Opening your email app with the paid order details.";
+          window.location.href = "mailto:" + supportEmail + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        });
+
+        copyButton.addEventListener("click", async function () {
+          try {
+            await navigator.clipboard.writeText(buildSummary());
+            note.textContent = "Order summary copied. You can paste it into email or chat if needed.";
+          } catch {
+            note.textContent = "Copy was blocked by the browser. You can still use the email button above.";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

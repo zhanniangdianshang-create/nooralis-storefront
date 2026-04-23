@@ -23,6 +23,7 @@ const publicFiles = new Map([
   ["/index.html", "index.html"],
   ["/success.html", "success.html"],
   ["/cancel.html", "cancel.html"],
+  ["/payment-details.html", "payment-details.html"],
   ["/policies.html", "policies.html"],
   ["/styles.css", "styles.css"],
   ["/script.js", "script.js"],

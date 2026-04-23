@@ -35,6 +35,7 @@ const checkoutActionContainer = document.querySelector("#checkout-action-contain
 const checkoutProviderName = document.querySelector("#checkout-provider-name");
 const checkoutProviderCopy = document.querySelector("#checkout-provider-copy");
 const paymentBadges = document.querySelector("#payment-badges");
+const postPaymentLink = document.querySelector("#post-payment-link");
 const quoteForm = document.querySelector("#quote-form");
 const formNote = document.querySelector("#form-note");
 
@@ -97,6 +98,14 @@ function rememberCheckoutDraft(payload, providerName) {
   } catch {
     // Ignore storage issues for private browsing or restricted environments.
   }
+}
+
+function updatePostPaymentLink() {
+  if (!postPaymentLink) {
+    return;
+  }
+
+  postPaymentLink.href = "payment-details.html";
 }
 
 function loadPayPalSdk(clientId, currency) {
@@ -219,7 +228,7 @@ function setupHostedCheckout(settings) {
     }
 
     rememberCheckoutDraft(payload, settings.providerName);
-    checkoutNote.textContent = `Opening ${settings.providerName} secure checkout...`;
+    checkoutNote.textContent = `Opening ${settings.providerName} secure checkout. After payment, come back and click "I've Paid - Submit Details".`;
 
     if (settings.openInNewTab === false) {
       window.location.href = settings.checkoutUrl;
@@ -251,6 +260,7 @@ async function setupCheckout() {
 
     updateCheckoutSummary(settings);
     renderPaymentBadges(settings.badges);
+    updatePostPaymentLink();
 
     if (settings.provider === "paypal") {
       await setupPayPalCheckout(settings);
@@ -273,6 +283,7 @@ async function setupCheckout() {
       actionLabel: "Request a Secure Invoice",
       note: error.message || "Secure checkout is temporarily unavailable."
     });
+    updatePostPaymentLink();
     checkoutNote.textContent = error.message || "Secure checkout is temporarily unavailable.";
   }
 }
