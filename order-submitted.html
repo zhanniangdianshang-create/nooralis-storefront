@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Details Received | Nooralis</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="status-page">
+      <section class="status-card">
+        <a class="brand" href="index.html" aria-label="Nooralis home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Nooralis</span>
+        </a>
+        <p class="section-kicker">Order desk updated</p>
+        <h1>We received your order details.</h1>
+        <p>
+          Our team can now match your PayPal.Me payment with the shipping information you submitted.
+          Keep your reference ready for follow-up.
+        </p>
+        <div class="order-reference-box" aria-label="Saved reference">
+          <span class="checkout-provider-label">Reference</span>
+          <strong id="submitted-reference">Preparing reference...</strong>
+        </div>
+        <div class="hero-actions">
+          <a class="primary-button" href="index.html">Back to Store</a>
+          <a class="secondary-button" href="payment-details.html">Edit Another Submission</a>
+        </div>
+      </section>
+    </main>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const reference = params.get("ref") || "Not available";
+        const target = document.querySelector("#submitted-reference");
+        target.textContent = reference;
+      })();
+    </script>
+  </body>
+</html>

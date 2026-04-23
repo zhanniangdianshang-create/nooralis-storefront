@@ -2,6 +2,8 @@
 .tools
 node_modules
 .env
+.env.local
+.data
 *.zip
 screenshot-*.png
 paypal-*.png

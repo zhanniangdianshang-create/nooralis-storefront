@@ -3,6 +3,14 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const { getCheckoutSettings } = require("./api/_checkout");
+const {
+  getDashboardPassword,
+  isDashboardAuthorized,
+  listOrders,
+  normalizeOrderSubmission,
+  saveOrder,
+  sendUnauthorized
+} = require("./api/_orders");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +31,8 @@ const publicFiles = new Map([
   ["/index.html", "index.html"],
   ["/success.html", "success.html"],
   ["/cancel.html", "cancel.html"],
+  ["/order-submitted.html", "order-submitted.html"],
+  ["/orders.html", "orders.html"],
   ["/payment-details.html", "payment-details.html"],
   ["/policies.html", "policies.html"],
   ["/styles.css", "styles.css"],
@@ -106,6 +116,7 @@ app.get("/healthz", (request, response) => {
     status: "ok",
     checkoutProvider: checkoutSettings.provider,
     checkoutConfigured: checkoutSettings.configured,
+    orderDashboardConfigured: Boolean(getDashboardPassword()),
     paypalConfigured: Boolean(paypalClientId && paypalClientSecret),
     paypalEnvironment,
     currency
@@ -144,6 +155,55 @@ app.get("/api/paypal/config", (request, response) => {
 
 app.get("/api/checkout/config", (request, response) => {
   response.json(getCheckoutSettings());
+});
+
+app.post("/api/orders", async (request, response) => {
+  const normalized = normalizeOrderSubmission(request.body);
+  if (!normalized.valid) {
+    response.status(400).json({
+      error: "Missing required fields.",
+      missing: normalized.missing
+    });
+    return;
+  }
+
+  try {
+    const saved = await saveOrder(normalized.order);
+    response.status(201).json({
+      ok: true,
+      orderReference: saved.orderReference,
+      submittedAt: saved.submittedAt
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(503).json({
+      error: "Unable to save order details right now."
+    });
+  }
+});
+
+app.get("/api/orders", async (request, response) => {
+  if (!isDashboardAuthorized(request)) {
+    sendUnauthorized(response);
+    return;
+  }
+
+  const requestedLimit = Number.parseInt(request.query.limit, 10);
+  const limit = Number.isFinite(requestedLimit) ? Math.max(1, Math.min(200, requestedLimit)) : 100;
+
+  try {
+    const orders = await listOrders(limit);
+    response.json({
+      ok: true,
+      count: orders.length,
+      orders
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(503).json({
+      error: "Unable to load orders right now."
+    });
+  }
 });
 
 app.post("/api/paypal/orders", async (request, response) => {

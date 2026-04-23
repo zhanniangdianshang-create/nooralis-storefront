@@ -1013,6 +1013,7 @@ h3 {
   .kit-section,
   .order-section,
   .quote-section,
+  .order-admin-toolbar,
   .policy-content {
     grid-template-columns: 1fr;
   }
@@ -1104,9 +1105,18 @@ h3 {
   .video-grid,
   .thumb-grid,
   .faq-list,
+  .order-card-grid,
   .checkout-form,
   .quote-form {
     grid-template-columns: 1fr;
+  }
+
+  .order-card-head {
+    grid-template-columns: 1fr;
+  }
+
+  .order-card-meta {
+    justify-items: start;
   }
 
   .checkout-followup {
@@ -1249,4 +1259,122 @@ h3 {
 
 .order-details-back {
   margin-top: 18px;
+}
+
+.order-admin-shell {
+  display: grid;
+  gap: 18px;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.order-admin-login {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.order-admin-login label {
+  display: grid;
+  gap: 8px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.order-admin-login input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 12px;
+  color: var(--ink);
+  background: #fbf8f0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.order-admin-login input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(13, 108, 112, 0.13);
+}
+
+.order-admin-toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.order-list {
+  display: grid;
+  gap: 16px;
+}
+
+.order-card,
+.order-card-placeholder {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.order-card-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.order-card-head h2,
+.order-card-placeholder h2 {
+  margin: 8px 0 0;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1;
+}
+
+.order-card-meta {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.order-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.order-card-grid div,
+.order-card-block {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  background: #fbf8f0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.order-card-grid strong,
+.order-card-block strong {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.order-card-grid span,
+.order-card-block p,
+.order-card-placeholder p {
+  margin: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.order-card-block {
+  margin-top: 14px;
 }

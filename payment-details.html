@@ -100,8 +100,7 @@
           <p class="form-note" id="payment-details-note" role="status" aria-live="polite"></p>
         </form>
         <p class="order-details-help">
-          If your email app does not open, use the copy button above and send the summary to
-          <a id="support-email-link" href="mailto:sales@nooraliswings.com">sales@nooraliswings.com</a>.
+          These details are saved directly to the Nooralis order desk. Keep the reference for any follow-up message.
         </p>
         <a class="secondary-button order-details-back" href="index.html#order">Back to Store</a>
       </section>
@@ -114,13 +113,8 @@
         const note = document.querySelector("#payment-details-note");
         const copyButton = document.querySelector("#copy-order-summary");
         const referenceDisplay = document.querySelector("#order-reference-display");
-        const supportEmailLink = document.querySelector("#support-email-link");
-        const supportEmail = config.supportEmail || "sales@nooraliswings.com";
         const storageKey = "nooralisCheckoutDraft";
         const referenceKey = "nooralisOrderReference";
-
-        supportEmailLink.href = "mailto:" + supportEmail;
-        supportEmailLink.textContent = supportEmail;
 
         function createReference() {
           const now = new Date();
@@ -209,22 +203,65 @@
           ].join("\n");
         }
 
+        function buildPayload() {
+          const data = new FormData(form);
+          return {
+            orderReference: orderReference,
+            paymentMethod: "PayPal.Me",
+            fullName: data.get("fullName"),
+            email: data.get("email"),
+            phone: data.get("phone"),
+            country: data.get("country"),
+            city: data.get("city"),
+            postalCode: data.get("postalCode"),
+            address: data.get("address"),
+            color: data.get("color"),
+            variant: data.get("variant"),
+            quantity: data.get("quantity"),
+            paypalPayerEmail: data.get("paypalPayerEmail"),
+            paypalTransactionId: data.get("paypalTransactionId"),
+            notes: data.get("notes")
+          };
+        }
+
         fillFormFromDraft();
 
-        form.addEventListener("submit", function (event) {
+        form.addEventListener("submit", async function (event) {
           event.preventDefault();
-          const subject = "Paid Nooralis order - " + orderReference;
-          const body = buildSummary();
-          note.textContent = "Opening your email app with the paid order details.";
-          window.location.href = "mailto:" + supportEmail + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+          note.textContent = "Saving your order details...";
+
+          try {
+            const response = await fetch("/api/orders", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(buildPayload())
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result.ok) {
+              throw new Error(result.error || "Could not save your order details.");
+            }
+
+            try {
+              window.sessionStorage.removeItem(storageKey);
+            } catch {
+              // Ignore storage cleanup issues.
+            }
+
+            window.location.href = "order-submitted.html?ref=" + encodeURIComponent(result.orderReference);
+          } catch (error) {
+            note.textContent = (error && error.message) || "Could not save the order details. Copy the summary and send it to our team.";
+          }
         });
 
         copyButton.addEventListener("click", async function () {
           try {
             await navigator.clipboard.writeText(buildSummary());
-            note.textContent = "Order summary copied. You can paste it into email or chat if needed.";
+            note.textContent = "Order summary copied. Keep it as backup if you need to message our team.";
           } catch {
-            note.textContent = "Copy was blocked by the browser. You can still use the email button above.";
+            note.textContent = "Copy was blocked by the browser. Try again or long-press to copy manually.";
           }
         });
       })();

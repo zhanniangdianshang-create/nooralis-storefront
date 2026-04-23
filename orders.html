@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nooralis Orders</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="policy-page">
+    <main>
+      <section class="section policy-hero">
+        <a class="brand" href="index.html" aria-label="Nooralis home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Nooralis Orders</span>
+        </a>
+        <p class="section-kicker">Private dashboard</p>
+        <h1>Order submissions</h1>
+        <p>Use your dashboard key to view the latest paid-order submissions collected from the storefront.</p>
+      </section>
+
+      <section class="section order-admin-shell">
+        <div class="order-admin-login" id="order-admin-login">
+          <label>
+            Dashboard key
+            <input type="password" id="dashboard-key" autocomplete="current-password" placeholder="Enter your private dashboard key">
+          </label>
+          <div class="hero-actions">
+            <button class="primary-button" id="load-orders-button" type="button">Load Orders</button>
+            <button class="secondary-button" id="clear-orders-button" type="button">Clear Saved Key</button>
+          </div>
+          <p class="form-note" id="order-admin-note" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="order-admin-toolbar">
+          <div class="order-reference-box">
+            <span class="checkout-provider-label">Latest sync</span>
+            <strong id="orders-last-sync">Not loaded yet</strong>
+          </div>
+          <div class="order-reference-box">
+            <span class="checkout-provider-label">Results</span>
+            <strong id="orders-count">0 orders</strong>
+          </div>
+        </div>
+
+        <div class="order-list" id="order-list">
+          <article class="order-card-placeholder">
+            <h2>Orders will appear here</h2>
+            <p>Enter your dashboard key above to load the latest submissions.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const storageKey = "nooralisDashboardKey";
+        const loadButton = document.querySelector("#load-orders-button");
+        const clearButton = document.querySelector("#clear-orders-button");
+        const note = document.querySelector("#order-admin-note");
+        const keyInput = document.querySelector("#dashboard-key");
+        const orderList = document.querySelector("#order-list");
+        const ordersCount = document.querySelector("#orders-count");
+        const ordersLastSync = document.querySelector("#orders-last-sync");
+
+        function getSavedKey() {
+          try {
+            return window.sessionStorage.getItem(storageKey) || "";
+          } catch {
+            return "";
+          }
+        }
+
+        function saveKey(value) {
+          try {
+            window.sessionStorage.setItem(storageKey, value);
+          } catch {
+            // Ignore storage issues.
+          }
+        }
+
+        function clearKey() {
+          try {
+            window.sessionStorage.removeItem(storageKey);
+          } catch {
+            // Ignore storage issues.
+          }
+        }
+
+        function formatDate(value) {
+          try {
+            return new Date(value).toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit"
+            });
+          } catch {
+            return value;
+          }
+        }
+
+        function escapeHtml(value) {
+          return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+        }
+
+        function formatMultiline(value) {
+          return escapeHtml(value).replace(/\n/g, "<br>");
+        }
+
+        function renderOrders(orders) {
+          ordersCount.textContent = orders.length + (orders.length === 1 ? " order" : " orders");
+          ordersLastSync.textContent = formatDate(new Date().toISOString());
+
+          if (!orders.length) {
+            orderList.innerHTML = '<article class="order-card-placeholder"><h2>No orders yet</h2><p>New paid-order submissions will appear here after customers finish the form.</p></article>';
+            return;
+          }
+
+          orderList.innerHTML = orders
+            .map(function (order) {
+              return `
+                <article class="order-card">
+                  <div class="order-card-head">
+                    <div>
+                      <span class="checkout-provider-label">Reference</span>
+                      <h2>${escapeHtml(order.orderReference)}</h2>
+                    </div>
+                    <div class="order-card-meta">
+                      <span>${escapeHtml(order.paymentMethod || "Payment submitted")}</span>
+                      <span>${escapeHtml(formatDate(order.submittedAt))}</span>
+                    </div>
+                  </div>
+                  <div class="order-card-grid">
+                    <div><strong>Buyer</strong><span>${escapeHtml(order.fullName)}</span></div>
+                    <div><strong>Email</strong><span>${escapeHtml(order.email)}</span></div>
+                    <div><strong>Phone</strong><span>${escapeHtml(order.phone)}</span></div>
+                    <div><strong>Country / city</strong><span>${escapeHtml(order.country)} / ${escapeHtml(order.city)}</span></div>
+                    <div><strong>Product</strong><span>${escapeHtml(order.variant)} / ${escapeHtml(order.color)}</span></div>
+                    <div><strong>Quantity</strong><span>${escapeHtml(order.quantity)}</span></div>
+                    <div><strong>PayPal payer email</strong><span>${escapeHtml(order.paypalPayerEmail || "Not provided")}</span></div>
+                    <div><strong>Transaction ID</strong><span>${escapeHtml(order.paypalTransactionId)}</span></div>
+                  </div>
+                  <div class="order-card-block">
+                    <strong>Shipping address</strong>
+                    <p>${formatMultiline(order.address)}</p>
+                  </div>
+                  <div class="order-card-block">
+                    <strong>Notes</strong>
+                    <p>${formatMultiline(order.notes || "No additional notes.")}</p>
+                  </div>
+                </article>
+              `;
+            })
+            .join("");
+        }
+
+        async function loadOrders() {
+          const key = keyInput.value.trim();
+          if (!key) {
+            note.textContent = "Enter the dashboard key first.";
+            return;
+          }
+
+          note.textContent = "Loading orders...";
+
+          try {
+            const response = await fetch("/api/orders?limit=100", {
+              headers: {
+                "x-dashboard-key": key
+              }
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.error || "Could not load orders.");
+            }
+
+            saveKey(key);
+            renderOrders(result.orders || []);
+            note.textContent = "Orders loaded successfully.";
+          } catch (error) {
+            note.textContent = (error && error.message) || "Could not load orders.";
+          }
+        }
+
+        loadButton.addEventListener("click", loadOrders);
+        clearButton.addEventListener("click", function () {
+          clearKey();
+          keyInput.value = "";
+          note.textContent = "Saved key cleared from this browser session.";
+        });
+
+        const savedKey = getSavedKey();
+        if (savedKey) {
+          keyInput.value = savedKey;
+          loadOrders();
+        }
+      })();
+    </script>
+  </body>
+</html>

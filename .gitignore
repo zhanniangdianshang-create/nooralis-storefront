@@ -1,5 +1,6 @@
 node_modules/
 .env
+.env.local
 npm-debug.log*
 .DS_Store
 screenshot-*.png
@@ -12,6 +13,8 @@ gh-login-*.txt
 render-login-*.txt
 vercel-login-*.txt
 .tools/
+.data/
 .vercel/
 
 .vercel
+.env*.local

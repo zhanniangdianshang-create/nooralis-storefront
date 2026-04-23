@@ -8,8 +8,11 @@ Included:
 - English product landing page and order section
 - Two product videos in `assets/videos/`
 - Config-driven checkout switch for hosted links, PayPal, or manual invoice fallback
+- Paid-order submission form and private order dashboard
+- Vercel Blob private storage for order records
 - PayPal order creation and payment capture endpoints
 - Vercel Function for `/api/checkout/config`
+- Vercel Function for `/api/orders`
 - Vercel Functions for `/api/paypal/*`
 - Production-safe static file routing
 - Health check at `/healthz`
@@ -51,6 +54,7 @@ CHECKOUT_PROVIDER=hosted_link
 CHECKOUT_PROVIDER_NAME=Oceanpayment
 HOSTED_CHECKOUT_URL=your_oceanpayment_payment_link
 HOSTED_CHECKOUT_SINGLE_UNIT_ONLY=true
+ORDER_DASHBOARD_PASSWORD=choose_a_private_dashboard_password
 CHECKOUT_BADGES=Cards|Apple Pay|Google Pay|Localized payment methods
 ```
 
@@ -90,6 +94,7 @@ CHECKOUT_PROVIDER=hosted_link
 CHECKOUT_PROVIDER_NAME=Oceanpayment
 HOSTED_CHECKOUT_URL=your_oceanpayment_payment_link
 HOSTED_CHECKOUT_SINGLE_UNIT_ONLY=true
+ORDER_DASHBOARD_PASSWORD=choose_a_private_dashboard_password
 PAYPAL_ENVIRONMENT=live
 PAYPAL_CLIENT_ID=your_live_paypal_client_id
 PAYPAL_CLIENT_SECRET=your_live_paypal_secret
@@ -107,7 +112,8 @@ PRODUCT_CURRENCY=usd
 5. Copy Vercel's DNS values into Spaceship.
 6. Open `/healthz` and confirm `status` is `ok`.
 7. Open `/api/checkout/config` and confirm `checkoutProvider` matches the intended gateway.
-8. Place a small real hosted-checkout or PayPal order and refund it to verify the live flow.
+8. Open `/orders.html`, enter the dashboard key, and confirm the order inbox loads.
+9. Place a small real hosted-checkout or PayPal order and refund it to verify the live flow.
 
 ## Deploy On Render Later
 
