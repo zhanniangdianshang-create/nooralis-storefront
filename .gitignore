@@ -5,3 +5,4 @@ npm-debug.log*
 screenshot-*.png
 nooralis-deploy.zip
 fix-codex-network.ps1
+gh-login-*.txt
