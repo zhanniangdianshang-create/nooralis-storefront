@@ -4,3 +4,4 @@ npm-debug.log*
 .DS_Store
 screenshot-*.png
 nooralis-deploy.zip
+fix-codex-network.ps1
