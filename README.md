@@ -34,4 +34,5 @@ PRODUCT_CURRENCY=usd
 
 ## Deploy
 
-Use a Node.js host such as Render. See `DEPLOYMENT.md` for the launch checklist.
+Use Vercel for the no-card launch path, or a Node.js host such as Render after billing is available.
+See `DEPLOYMENT.md` for the launch checklist.

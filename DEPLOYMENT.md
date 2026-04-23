@@ -2,16 +2,17 @@
 
 ## Current Status
 
-This project is ready to deploy as a Node.js storefront with PayPal Checkout.
+This project is ready to deploy as a Vercel storefront with PayPal Checkout.
 
 Included:
 - English product landing page and order section
 - Two product videos in `assets/videos/`
 - PayPal order creation and payment capture endpoints
+- Vercel Functions for `/api/paypal/*`
 - Production-safe static file routing
 - Health check at `/healthz`
 - SEO helpers at `/robots.txt` and `/sitemap.xml`
-- Render deployment blueprint in `render.yaml`
+- Vercel deployment config in `vercel.json`
 
 ## Recommended Domain
 
@@ -22,19 +23,20 @@ Why:
 - The name connects directly to flying butterfly performances.
 - It avoids the unavailable `nooralis.com` domain.
 
-After purchase, use these DNS records:
+After purchase, use the DNS records shown by Vercel after adding the domain.
+They usually look like:
 
 ```text
 Type: CNAME
 Name: www
-Value: your Render service domain
+Value: cname.vercel-dns.com
 
-Type: ALIAS / ANAME / CNAME flattening
+Type: A
 Name: @
-Value: your Render service domain
+Value: 76.76.21.21
 ```
 
-If the registrar does not support ALIAS/ANAME at the root, put DNS on Cloudflare and enable CNAME flattening.
+Always follow the exact values Vercel shows in the project domain screen.
 
 ## PayPal
 
@@ -70,23 +72,20 @@ PRODUCT_PRICE_CENTS=34900
 PRODUCT_CURRENCY=usd
 ```
 
-## Deploy On Render
+## Deploy On Vercel
 
 1. Push this folder to a GitHub repository.
-2. In Render, create a new Web Service from that repository.
-3. Use:
+2. Import the repository into Vercel or deploy with `vercel --prod`.
+3. Use the production environment variables above.
+4. Add `nooraliswings.com` and `www.nooraliswings.com` in Vercel Domains.
+5. Copy Vercel's DNS values into Spaceship.
+6. Open `/healthz` and confirm `status` is `ok`.
+7. Place a small real PayPal order and refund it inside PayPal to verify live checkout.
 
-```text
-Build command: npm install
-Start command: npm start
-```
+## Deploy On Render Later
 
-4. Add the production environment variables above.
-5. Deploy.
-6. Add the custom domain `nooraliswings.com` and `www.nooraliswings.com`.
-7. Copy Render's DNS target into your domain DNS records.
-8. Open `/healthz` and confirm `status` is `ok`.
-9. Place a small real PayPal order and refund it inside PayPal to verify live checkout.
+Render remains an option after billing is available. Use `render.yaml`, `npm install`,
+and `npm start`.
 
 ## Local Commands
 

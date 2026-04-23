@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nooraliswings.com/sitemap.xml
