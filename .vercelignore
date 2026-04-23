@@ -1,0 +1,9 @@
+.git
+.tools
+node_modules
+.env
+*.zip
+screenshot-*.png
+render-login-*.txt
+vercel-login-*.txt
+fix-codex-network.ps1
