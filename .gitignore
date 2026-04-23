@@ -7,5 +7,6 @@ nooralis-deploy.zip
 fix-codex-network.ps1
 gh-login-*.txt
 render-login-*.txt
+vercel-login-*.txt
 .tools/
 .vercel/
