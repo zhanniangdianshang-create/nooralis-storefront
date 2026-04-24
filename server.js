@@ -4,11 +4,17 @@ const express = require("express");
 const path = require("path");
 const { getCheckoutSettings } = require("./api/_checkout");
 const {
+  findOrder,
   getDashboardPassword,
+  getPublicOrderView,
   isDashboardAuthorized,
   listOrders,
+  normalizeOrderLookupQuery,
   normalizeOrderSubmission,
+  normalizeReturnSubmission,
   saveOrder,
+  saveReturnRequest,
+  updateOrderAfterSalesStatus,
   sendUnauthorized
 } = require("./api/_orders");
 
@@ -30,6 +36,9 @@ const publicFiles = new Map([
   ["/", "index.html"],
   ["/index.html", "index.html"],
   ["/showcase.html", "showcase.html"],
+  ["/order-status.html", "order-status.html"],
+  ["/returns.html", "returns.html"],
+  ["/return-submitted.html", "return-submitted.html"],
   ["/success.html", "success.html"],
   ["/cancel.html", "cancel.html"],
   ["/order-submitted.html", "order-submitted.html"],
@@ -188,6 +197,37 @@ app.post("/api/orders", async (request, response) => {
   }
 });
 
+app.post("/api/orders/status", async (request, response) => {
+  const normalized = normalizeOrderLookupQuery(request.body);
+  if (!normalized.valid) {
+    response.status(400).json({
+      error: "Missing required fields.",
+      missing: normalized.missing
+    });
+    return;
+  }
+
+  try {
+    const order = await findOrder(normalized.query);
+    if (!order) {
+      response.status(404).json({
+        error: "Order not found."
+      });
+      return;
+    }
+
+    response.json({
+      ok: true,
+      order: getPublicOrderView(order)
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(503).json({
+      error: "Unable to load order status right now."
+    });
+  }
+});
+
 app.get("/api/orders", async (request, response) => {
   if (!isDashboardAuthorized(request)) {
     sendUnauthorized(response);
@@ -208,6 +248,58 @@ app.get("/api/orders", async (request, response) => {
     console.error(error);
     response.status(503).json({
       error: "Unable to load orders right now."
+    });
+  }
+});
+
+app.post("/api/returns", async (request, response) => {
+  const normalized = normalizeReturnSubmission(request.body);
+  if (!normalized.valid) {
+    response.status(400).json({
+      error: "Missing required fields.",
+      missing: normalized.missing
+    });
+    return;
+  }
+
+  const orderLookup = normalizeOrderLookupQuery({
+    orderReference: normalized.request.orderReference,
+    email: normalized.request.email,
+    paypalTransactionId: normalized.request.paypalTransactionId
+  });
+
+  if (!orderLookup.valid) {
+    response.status(400).json({
+      error: "Order reference and matching buyer details are required."
+    });
+    return;
+  }
+
+  try {
+    const order = await findOrder(orderLookup.query);
+    if (!order) {
+      response.status(404).json({
+        error: "We could not verify this order. Check the order reference and buyer details."
+      });
+      return;
+    }
+
+    const saved = await saveReturnRequest({
+      ...normalized.request,
+      orderStatusAtRequest: order.orderStatus || "Payment details received"
+    });
+
+    await updateOrderAfterSalesStatus(order, `Return request received (${saved.returnReference})`);
+
+    response.status(201).json({
+      ok: true,
+      returnReference: saved.returnReference,
+      submittedAt: saved.submittedAt
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(503).json({
+      error: "Unable to save the return request right now."
     });
   }
 });

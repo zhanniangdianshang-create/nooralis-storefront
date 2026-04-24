@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Return Request Received | Nooralis</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="status-page">
+      <section class="status-card">
+        <a class="brand" href="index.html" aria-label="Nooralis home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Nooralis</span>
+        </a>
+        <p class="section-kicker">After-sales request received</p>
+        <h1>Your request is now in review.</h1>
+        <p>
+          The return or after-sales request has been saved. Keep the reference below for any follow-up message with the Nooralis team.
+        </p>
+        <div class="order-reference-box">
+          <span class="checkout-provider-label">Return reference</span>
+          <strong id="return-reference-display">Preparing reference...</strong>
+        </div>
+        <div class="hero-actions">
+          <a class="primary-button" href="index.html">Back to Store</a>
+          <a class="secondary-button" href="order-status.html">Track Order</a>
+        </div>
+      </section>
+    </main>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        document.querySelector("#return-reference-display").textContent = params.get("ref") || "Not available";
+      })();
+    </script>
+  </body>
+</html>

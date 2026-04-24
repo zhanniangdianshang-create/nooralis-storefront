@@ -1,6 +1,6 @@
 window.NOORALIS_CONFIG = {
   brandName: "Nooralis",
-  supportEmail: "sales@nooraliswings.com",
+  supportEmail: "zhannaingdianshang@gmail.com",
   unitPriceCents: 34900,
   currency: "USD"
 };

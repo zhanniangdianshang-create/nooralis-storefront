@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>After-Sales & Returns | Nooralis</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+  </head>
+  <body class="policy-page">
+    <main>
+      <section class="section policy-hero">
+        <a class="brand" href="index.html" aria-label="Nooralis home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Nooralis</span>
+        </a>
+        <p class="section-kicker">After-sales service</p>
+        <h1>Submit a return or after-sales request.</h1>
+        <p>
+          Use this page for damaged-on-arrival cases, missing parts, wrong configuration, or other after-sales support.
+          We verify the order first, then review the issue and contact the buyer with the next step.
+        </p>
+      </section>
+
+      <section class="section service-shell">
+        <div class="return-process-grid">
+          <article class="process-step">
+            <span>01</span>
+            <h3>Verify the order</h3>
+            <p>Enter the Nooralis order reference, matching buyer email, and PayPal transaction ID so we can match the request.</p>
+          </article>
+          <article class="process-step">
+            <span>02</span>
+            <h3>Describe the issue clearly</h3>
+            <p>Choose the reason, item condition, and requested resolution so the service desk can triage the request faster.</p>
+          </article>
+          <article class="process-step">
+            <span>03</span>
+            <h3>Wait for manual review</h3>
+            <p>Each request is reviewed before a return route, replacement plan, or support reply is given.</p>
+          </article>
+        </div>
+
+        <div class="service-panel">
+          <form class="service-form" id="return-request-form">
+            <label>
+              Order reference
+              <input type="text" name="orderReference" placeholder="NRL-20260424-ABCDE" required>
+            </label>
+            <label>
+              Buyer full name
+              <input type="text" name="fullName" autocomplete="name" required>
+            </label>
+            <label>
+              Buyer email
+              <input type="email" name="email" autocomplete="email" required>
+            </label>
+            <label>
+              Phone or WhatsApp
+              <input type="text" name="phone" autocomplete="tel">
+            </label>
+            <label>
+              PayPal transaction ID
+              <input type="text" name="paypalTransactionId" required>
+            </label>
+            <label>
+              Delivery date
+              <input type="text" name="deliveryDate" placeholder="Optional">
+            </label>
+            <label>
+              Return reason
+              <select name="returnReason" required>
+                <option value="">Select one</option>
+                <option>Damaged on arrival</option>
+                <option>Missing part</option>
+                <option>Wrong color or version</option>
+                <option>Performance issue</option>
+                <option>Other after-sales support</option>
+              </select>
+            </label>
+            <label>
+              Item condition
+              <select name="itemCondition" required>
+                <option value="">Select one</option>
+                <option>Unused</option>
+                <option>Tested only</option>
+                <option>Used in rehearsal</option>
+                <option>Used in live event</option>
+              </select>
+            </label>
+            <label class="full">
+              Requested resolution
+              <select name="requestedResolution" required>
+                <option value="">Select one</option>
+                <option>Replacement part</option>
+                <option>Replacement unit</option>
+                <option>Repair support</option>
+                <option>Refund review</option>
+              </select>
+            </label>
+            <label class="full">
+              Issue details
+              <textarea name="issueDetails" rows="6" placeholder="Describe what happened, what was received, and what outcome you need." required></textarea>
+            </label>
+            <button class="primary-button" type="submit">Submit Return Request</button>
+            <p class="form-note" id="return-request-note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const form = document.querySelector("#return-request-form");
+        const note = document.querySelector("#return-request-note");
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("order")) {
+          form.elements.orderReference.value = params.get("order");
+        }
+        if (params.get("email")) {
+          form.elements.email.value = params.get("email");
+        }
+
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          note.textContent = "Submitting return request...";
+
+          const data = new FormData(form);
+          const payload = Object.fromEntries(data.entries());
+
+          try {
+            const response = await fetch("/api/returns", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result.ok) {
+              throw new Error(result.error || "Could not submit the return request.");
+            }
+
+            window.location.href = "return-submitted.html?ref=" + encodeURIComponent(result.returnReference);
+          } catch (error) {
+            note.textContent = (error && error.message) || "Could not submit the return request right now.";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

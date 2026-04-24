@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Track Your Order | Nooralis</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+  </head>
+  <body class="policy-page">
+    <main>
+      <section class="section policy-hero">
+        <a class="brand" href="index.html" aria-label="Nooralis home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Nooralis</span>
+        </a>
+        <p class="section-kicker">Order lookup</p>
+        <h1>Track a paid order.</h1>
+        <p>
+          Enter the Nooralis order reference together with the buyer email or the PayPal transaction ID.
+          This page shows the latest order-handling status we have on file.
+        </p>
+      </section>
+
+      <section class="section service-shell">
+        <div class="service-panel">
+          <form class="service-form" id="order-status-form">
+            <label>
+              Order reference
+              <input type="text" name="orderReference" placeholder="NRL-20260424-ABCDE" required>
+            </label>
+            <label>
+              Buyer email
+              <input type="email" name="email" placeholder="you@example.com">
+            </label>
+            <label class="full">
+              PayPal transaction ID
+              <input type="text" name="paypalTransactionId" placeholder="Use this if you do not want to enter buyer email">
+            </label>
+            <button class="primary-button" type="submit">Check Order Status</button>
+            <p class="form-note" id="order-status-note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="lookup-result-card" id="order-status-result" hidden>
+          <div class="order-card-head">
+            <div>
+              <span class="checkout-provider-label">Current result</span>
+              <h2 id="lookup-order-reference">Order reference</h2>
+            </div>
+            <div class="order-card-meta">
+              <span id="lookup-order-status">Payment details received</span>
+              <span id="lookup-order-submitted">Not loaded yet</span>
+            </div>
+          </div>
+          <div class="lookup-meta-grid">
+            <div><strong>Buyer</strong><span id="lookup-full-name">-</span></div>
+            <div><strong>Product</strong><span id="lookup-product">-</span></div>
+            <div><strong>Quantity</strong><span id="lookup-quantity">-</span></div>
+            <div><strong>Location</strong><span id="lookup-location">-</span></div>
+            <div><strong>Payment method</strong><span id="lookup-payment-method">-</span></div>
+            <div><strong>Transaction</strong><span id="lookup-transaction">-</span></div>
+            <div><strong>After-sales</strong><span id="lookup-after-sales">-</span></div>
+          </div>
+          <div class="lookup-actions">
+            <a class="secondary-button" id="lookup-return-link" href="returns.html">Start Return / After-Sales Request</a>
+            <a class="secondary-button" id="lookup-email-link" href="mailto:zhannaingdianshang@gmail.com">Email Support</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const config = window.NOORALIS_CONFIG || {};
+        const form = document.querySelector("#order-status-form");
+        const note = document.querySelector("#order-status-note");
+        const resultCard = document.querySelector("#order-status-result");
+        const emailLink = document.querySelector("#lookup-email-link");
+        const supportEmail = config.supportEmail || "zhannaingdianshang@gmail.com";
+
+        emailLink.href = "mailto:" + supportEmail;
+        emailLink.textContent = supportEmail;
+
+        function formatDate(value) {
+          try {
+            return new Date(value).toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit"
+            });
+          } catch {
+            return value;
+          }
+        }
+
+        function fillResult(order) {
+          document.querySelector("#lookup-order-reference").textContent = order.orderReference;
+          document.querySelector("#lookup-order-status").textContent = order.orderStatus;
+          document.querySelector("#lookup-order-submitted").textContent = formatDate(order.submittedAt);
+          document.querySelector("#lookup-full-name").textContent = order.fullName;
+          document.querySelector("#lookup-product").textContent = order.variant + " / " + order.color;
+          document.querySelector("#lookup-quantity").textContent = String(order.quantity);
+          document.querySelector("#lookup-location").textContent = order.country + " / " + order.city;
+          document.querySelector("#lookup-payment-method").textContent = order.paymentMethod;
+          document.querySelector("#lookup-transaction").textContent = order.paypalTransactionIdMasked || "Stored";
+          document.querySelector("#lookup-after-sales").textContent = order.afterSalesStatus;
+
+          const returnLink = document.querySelector("#lookup-return-link");
+          returnLink.href = "returns.html?order=" + encodeURIComponent(order.orderReference) + "&email=" + encodeURIComponent(order.email || "");
+          resultCard.hidden = false;
+        }
+
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          note.textContent = "Checking order status...";
+          resultCard.hidden = true;
+
+          const data = new FormData(form);
+          const payload = {
+            orderReference: data.get("orderReference"),
+            email: data.get("email"),
+            paypalTransactionId: data.get("paypalTransactionId")
+          };
+
+          try {
+            const response = await fetch("/api/orders/status", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result.ok) {
+              throw new Error(result.error || "Could not find this order.");
+            }
+
+            fillResult(result.order);
+            note.textContent = "Order found.";
+          } catch (error) {
+            note.textContent = (error && error.message) || "Could not find this order right now.";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

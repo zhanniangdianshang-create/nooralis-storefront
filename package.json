@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "check": "node --check server.js && node --check script.js && node --check api/_paypal.js && node --check api/_checkout.js && node --check api/_orders.js && node --check api/checkout/config.js && node --check api/orders/index.js && node --check api/paypal/config.js && node --check api/paypal/orders.js && node --check api/paypal/orders/[orderID]/capture.js && node --check api/healthz.js"
+    "check": "node --check server.js && node --check script.js && node --check api/_paypal.js && node --check api/_checkout.js && node --check api/_orders.js && node --check api/checkout/config.js && node --check api/orders/index.js && node --check api/orders/status.js && node --check api/returns/index.js && node --check api/paypal/config.js && node --check api/paypal/orders.js && node --check api/paypal/orders/[orderID]/capture.js && node --check api/healthz.js"
   },
   "dependencies": {
     "@vercel/blob": "^2.3.3",

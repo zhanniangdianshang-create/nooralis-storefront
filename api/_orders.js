@@ -7,6 +7,7 @@ const { sendJson } = require("./_paypal");
 const allowedColors = new Set(["Golden", "Pink-Purple", "Blue", "Red", "Custom color inquiry"]);
 const allowedVariants = new Set(["LED performance version", "Standard non-LED version"]);
 const localOrderDir = path.join(__dirname, "..", ".data", "orders");
+const localReturnDir = path.join(__dirname, "..", ".data", "returns");
 
 function sanitizeText(value, maxLength = 500) {
   return String(value || "")
@@ -22,6 +23,10 @@ function sanitizeMultilineText(value, maxLength = 3000) {
     .replace(/\u0000/g, "")
     .trim()
     .slice(0, maxLength);
+}
+
+function sanitizeEmail(value) {
+  return sanitizeText(value, 160).toLowerCase();
 }
 
 function parseQuantity(value, fallback = 1) {
@@ -46,6 +51,17 @@ function normalizeOrderReference(value) {
     return cleaned;
   }
   return createOrderReference();
+}
+
+function createReturnReference() {
+  const now = new Date();
+  const stamp = [
+    now.getUTCFullYear(),
+    String(now.getUTCMonth() + 1).padStart(2, "0"),
+    String(now.getUTCDate()).padStart(2, "0")
+  ].join("");
+  const random = crypto.randomBytes(3).toString("hex").toUpperCase();
+  return `RMA-${stamp}-${random}`;
 }
 
 function getDashboardPassword() {
@@ -76,13 +92,13 @@ function normalizeOrderSubmission(body = {}) {
   const variant = allowedVariants.has(body.variant) ? body.variant : "LED performance version";
   const quantity = parseQuantity(body.quantity, 1);
   const fullName = sanitizeText(body.fullName, 120);
-  const email = sanitizeText(body.email, 160).toLowerCase();
+  const email = sanitizeEmail(body.email);
   const phone = sanitizeText(body.phone, 80);
   const country = sanitizeText(body.country, 80);
   const city = sanitizeText(body.city, 80);
   const postalCode = sanitizeText(body.postalCode, 40);
   const address = sanitizeMultilineText(body.address, 500);
-  const paypalPayerEmail = sanitizeText(body.paypalPayerEmail, 160).toLowerCase();
+  const paypalPayerEmail = sanitizeEmail(body.paypalPayerEmail);
   const paypalTransactionId = sanitizeText(body.paypalTransactionId, 160);
   const notes = sanitizeMultilineText(body.notes, 2000);
   const paymentMethod = sanitizeText(body.paymentMethod || "PayPal.Me", 80);
@@ -119,6 +135,72 @@ function normalizeOrderSubmission(body = {}) {
   };
 }
 
+function normalizeOrderLookupQuery(body = {}) {
+  const orderReference = sanitizeText(body.orderReference, 40).toUpperCase();
+  const email = sanitizeEmail(body.email);
+  const paypalTransactionId = sanitizeText(body.paypalTransactionId, 160);
+  const missing = [];
+
+  if (!orderReference) {
+    missing.push("orderReference");
+  }
+
+  if (!email && !paypalTransactionId) {
+    missing.push("email_or_paypalTransactionId");
+  }
+
+  return {
+    valid: missing.length === 0,
+    missing,
+    query: {
+      orderReference,
+      email,
+      paypalTransactionId
+    }
+  };
+}
+
+function normalizeReturnSubmission(body = {}) {
+  const orderReference = sanitizeText(body.orderReference, 40).toUpperCase();
+  const fullName = sanitizeText(body.fullName, 120);
+  const email = sanitizeEmail(body.email);
+  const phone = sanitizeText(body.phone, 80);
+  const paypalTransactionId = sanitizeText(body.paypalTransactionId, 160);
+  const returnReason = sanitizeText(body.returnReason, 120);
+  const requestedResolution = sanitizeText(body.requestedResolution, 120);
+  const itemCondition = sanitizeText(body.itemCondition, 120);
+  const issueDetails = sanitizeMultilineText(body.issueDetails, 2000);
+  const deliveryDate = sanitizeText(body.deliveryDate, 40);
+  const missing = [];
+
+  if (!orderReference) missing.push("orderReference");
+  if (!fullName) missing.push("fullName");
+  if (!email) missing.push("email");
+  if (!paypalTransactionId) missing.push("paypalTransactionId");
+  if (!returnReason) missing.push("returnReason");
+  if (!requestedResolution) missing.push("requestedResolution");
+  if (!itemCondition) missing.push("itemCondition");
+  if (!issueDetails) missing.push("issueDetails");
+
+  return {
+    valid: missing.length === 0,
+    missing,
+    request: {
+      returnReference: createReturnReference(),
+      orderReference,
+      fullName,
+      email,
+      phone,
+      paypalTransactionId,
+      returnReason,
+      requestedResolution,
+      itemCondition,
+      issueDetails,
+      deliveryDate
+    }
+  };
+}
+
 function getOrderStorageMode() {
   return process.env.BLOB_READ_WRITE_TOKEN ? "blob" : "local";
 }
@@ -126,7 +208,46 @@ function getOrderStorageMode() {
 function buildOrderRecord(order) {
   return {
     ...order,
+    orderStatus: order.orderStatus || "Payment details received",
+    afterSalesStatus: order.afterSalesStatus || "No return request on file",
     submittedAt: new Date().toISOString()
+  };
+}
+
+function buildReturnRecord(request) {
+  return {
+    ...request,
+    returnStatus: request.returnStatus || "Return request received",
+    submittedAt: new Date().toISOString()
+  };
+}
+
+function maskTransactionId(value) {
+  const clean = sanitizeText(value, 160);
+  if (!clean) {
+    return "";
+  }
+  if (clean.length <= 4) {
+    return clean;
+  }
+  return `${"*".repeat(Math.max(0, clean.length - 4))}${clean.slice(-4)}`;
+}
+
+function getPublicOrderView(record) {
+  return {
+    orderReference: record.orderReference,
+    orderStatus: record.orderStatus || "Payment details received",
+    afterSalesStatus: record.afterSalesStatus || "No return request on file",
+    submittedAt: record.submittedAt,
+    paymentMethod: record.paymentMethod,
+    fullName: record.fullName,
+    email: record.email,
+    country: record.country,
+    city: record.city,
+    color: record.color,
+    variant: record.variant,
+    quantity: record.quantity,
+    paypalTransactionIdMasked: maskTransactionId(record.paypalTransactionId)
   };
 }
 
@@ -165,6 +286,87 @@ async function saveOrder(order) {
     return saveOrderToBlob(record);
   }
   return saveOrderLocally(record);
+}
+
+function getLocalOrderPath(record) {
+  return path.join(localOrderDir, `${record.orderReference}.json`);
+}
+
+function getBlobOrderPath(record) {
+  const submittedDate = String(record.submittedAt || "").slice(0, 10);
+  return `orders/${submittedDate}/${record.orderReference}.json`;
+}
+
+async function persistOrderLocally(record) {
+  await fs.mkdir(localOrderDir, { recursive: true });
+  const pathname = getLocalOrderPath(record);
+  await fs.writeFile(pathname, JSON.stringify(record, null, 2), "utf8");
+  return pathname;
+}
+
+async function persistOrderToBlob(record) {
+  const pathname = getBlobOrderPath(record);
+  await put(pathname, JSON.stringify(record, null, 2), {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json"
+  });
+  return pathname;
+}
+
+async function updateOrderAfterSalesStatus(record, afterSalesStatus) {
+  if (!record || !record.orderReference || !record.submittedAt) {
+    return null;
+  }
+
+  const nextRecord = {
+    ...record,
+    afterSalesStatus: sanitizeText(afterSalesStatus, 240) || "Return request received"
+  };
+
+  if (getOrderStorageMode() === "blob") {
+    await persistOrderToBlob(nextRecord);
+  } else {
+    await persistOrderLocally(nextRecord);
+  }
+
+  return nextRecord;
+}
+
+async function saveReturnLocally(record) {
+  await fs.mkdir(localReturnDir, { recursive: true });
+  const pathname = path.join(localReturnDir, `${record.returnReference}.json`);
+  await fs.writeFile(pathname, JSON.stringify(record, null, 2), "utf8");
+  return {
+    pathname,
+    returnReference: record.returnReference,
+    submittedAt: record.submittedAt
+  };
+}
+
+async function saveReturnToBlob(record) {
+  const submittedDate = record.submittedAt.slice(0, 10);
+  const pathname = `returns/${submittedDate}/${record.returnReference}.json`;
+  const blob = await put(pathname, JSON.stringify(record, null, 2), {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: false,
+    contentType: "application/json"
+  });
+  return {
+    pathname: blob.pathname,
+    returnReference: record.returnReference,
+    submittedAt: record.submittedAt
+  };
+}
+
+async function saveReturnRequest(request) {
+  const record = buildReturnRecord(request);
+  if (getOrderStorageMode() === "blob") {
+    return saveReturnToBlob(record);
+  }
+  return saveReturnLocally(record);
 }
 
 async function parseBlobJson(pathname) {
@@ -209,6 +411,17 @@ async function listBlobOrders(limit = 100) {
   return records.filter(Boolean);
 }
 
+function orderMatchesQuery(record, query) {
+  const referenceMatches = String(record.orderReference || "").toUpperCase() === query.orderReference;
+  if (!referenceMatches) {
+    return false;
+  }
+
+  const emailMatches = query.email && sanitizeEmail(record.email) === query.email;
+  const transactionMatches = query.paypalTransactionId && sanitizeText(record.paypalTransactionId, 160) === query.paypalTransactionId;
+  return Boolean(emailMatches || transactionMatches);
+}
+
 async function listOrders(limit = 100) {
   if (getOrderStorageMode() === "blob") {
     return listBlobOrders(limit);
@@ -216,12 +429,25 @@ async function listOrders(limit = 100) {
   return listLocalOrders(limit);
 }
 
+async function findOrder(query) {
+  const orders = await listOrders(500);
+  const match = orders.find((record) => orderMatchesQuery(record, query));
+  return match || null;
+}
+
 module.exports = {
   createOrderReference,
+  createReturnReference,
+  findOrder,
   getDashboardPassword,
+  getPublicOrderView,
   isDashboardAuthorized,
   listOrders,
+  normalizeOrderLookupQuery,
   normalizeOrderSubmission,
+  normalizeReturnSubmission,
   saveOrder,
+  saveReturnRequest,
+  updateOrderAfterSalesStatus,
   sendUnauthorized
 };
