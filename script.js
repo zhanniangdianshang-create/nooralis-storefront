@@ -40,10 +40,21 @@ const quoteForm = document.querySelector("#quote-form");
 const formNote = document.querySelector("#form-note");
 
 let handleCheckoutSubmit = () => {
-  checkoutNote.textContent = "Checkout is still loading. Please wait a moment.";
+  if (checkoutNote) {
+    checkoutNote.textContent = "Checkout is still loading. Please wait a moment.";
+  }
 };
 
 function getCheckoutPayload() {
+  if (!checkoutForm) {
+    return {
+      color: "Golden",
+      variant: "LED performance version",
+      quantity: 1,
+      email: ""
+    };
+  }
+
   const formData = new FormData(checkoutForm);
   const quantity = Math.max(1, Math.min(20, Number(formData.get("quantity") || 1)));
   return {
@@ -55,6 +66,10 @@ function getCheckoutPayload() {
 }
 
 function renderPaymentBadges(badges = []) {
+  if (!paymentBadges) {
+    return;
+  }
+
   paymentBadges.innerHTML = "";
   badges.forEach((badge) => {
     const element = document.createElement("span");
@@ -64,11 +79,19 @@ function renderPaymentBadges(badges = []) {
 }
 
 function updateCheckoutSummary(settings) {
+  if (!checkoutProviderName || !checkoutProviderCopy) {
+    return;
+  }
+
   checkoutProviderName.textContent = settings.providerName || "Secure checkout";
   checkoutProviderCopy.textContent = settings.note || "We are preparing the best payment route for your region.";
 }
 
 function renderCheckoutButton(label) {
+  if (!checkoutActionContainer) {
+    return null;
+  }
+
   checkoutActionContainer.innerHTML = "";
   const button = document.createElement("button");
   button.type = "submit";
@@ -250,6 +273,10 @@ function setupManualCheckout(settings) {
 }
 
 async function setupCheckout() {
+  if (!checkoutForm || !checkoutNote || !checkoutActionContainer || !checkoutProviderName || !checkoutProviderCopy) {
+    return;
+  }
+
   try {
     const response = await fetch("/api/checkout/config");
     const settings = await response.json();
@@ -288,29 +315,33 @@ async function setupCheckout() {
   }
 }
 
-checkoutForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  handleCheckoutSubmit();
-});
+if (checkoutForm) {
+  checkoutForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    handleCheckoutSubmit();
+  });
 
-setupCheckout();
+  setupCheckout();
+}
 
-quoteForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const data = new FormData(quoteForm);
-  const subject = "Nooralis LED Bionic Butterfly Drone Inquiry";
-  const body = [
-    `Name: ${data.get("name")}`,
-    `Email: ${data.get("email")}`,
-    `Event type: ${data.get("event")}`,
-    `Quantity: ${data.get("quantity")}`,
-    "",
-    "Message:",
-    data.get("message") || "No additional message provided."
-  ].join("\n");
+if (quoteForm && formNote) {
+  quoteForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(quoteForm);
+    const subject = "Nooralis LED Bionic Butterfly Drone Inquiry";
+    const body = [
+      `Name: ${data.get("name")}`,
+      `Email: ${data.get("email")}`,
+      `Event type: ${data.get("event")}`,
+      `Quantity: ${data.get("quantity")}`,
+      "",
+      "Message:",
+      data.get("message") || "No additional message provided."
+    ].join("\n");
 
-  const email = config.supportEmail || "sales@nooralis.com";
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  formNote.textContent = "Opening your email app with the inquiry details.";
-  window.location.href = mailto;
-});
+    const email = config.supportEmail || "zhannaingdianshang@gmail.com";
+    const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    formNote.textContent = "Opening your email app with the inquiry details.";
+    window.location.href = mailto;
+  });
+}

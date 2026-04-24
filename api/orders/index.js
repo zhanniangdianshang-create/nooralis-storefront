@@ -5,6 +5,7 @@ const {
   saveOrder,
   sendUnauthorized
 } = require("../_orders");
+const { notifyOrderSubmission } = require("../_notifications");
 const { readJsonBody, sendJson } = require("../_paypal");
 
 module.exports = async function handler(request, response) {
@@ -22,10 +23,26 @@ module.exports = async function handler(request, response) {
 
     try {
       const saved = await saveOrder(normalized.order);
+      let notifications = {
+        enabled: false,
+        merchantSent: false,
+        buyerSent: false
+      };
+
+      try {
+        notifications = await notifyOrderSubmission({
+          ...normalized.order,
+          submittedAt: saved.submittedAt
+        });
+      } catch (notificationError) {
+        console.error(notificationError);
+      }
+
       sendJson(response, 201, {
         ok: true,
         orderReference: saved.orderReference,
-        submittedAt: saved.submittedAt
+        submittedAt: saved.submittedAt,
+        notifications
       });
     } catch (error) {
       console.error(error);

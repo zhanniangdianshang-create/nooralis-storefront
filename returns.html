@@ -21,6 +21,9 @@
           Use this page for damaged-on-arrival cases, missing parts, wrong configuration, or other after-sales support.
           We verify the order first, then review the issue and contact the buyer with the next step.
         </p>
+        <p class="order-details-intro">
+          If email reminders are active, the store inbox and the buyer email will both receive a confirmation after submission.
+        </p>
       </section>
 
       <section class="section service-shell">
@@ -143,7 +146,13 @@
               throw new Error(result.error || "Could not submit the return request.");
             }
 
-            window.location.href = "return-submitted.html?ref=" + encodeURIComponent(result.returnReference);
+            const notifications = result.notifications || {};
+            const mailStatus = notifications.enabled ? "active" : "inactive";
+            window.location.href =
+              "return-submitted.html?ref=" +
+              encodeURIComponent(result.returnReference) +
+              "&mail=" +
+              encodeURIComponent(mailStatus);
           } catch (error) {
             note.textContent = (error && error.message) || "Could not submit the return request right now.";
           }

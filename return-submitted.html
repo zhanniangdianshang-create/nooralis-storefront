@@ -19,6 +19,9 @@
         <p>
           The return or after-sales request has been saved. Keep the reference below for any follow-up message with the Nooralis team.
         </p>
+        <p class="status-helper" id="return-mail-status">
+          Email reminders are sent when the notification service is active.
+        </p>
         <div class="order-reference-box">
           <span class="checkout-provider-label">Return reference</span>
           <strong id="return-reference-display">Preparing reference...</strong>
@@ -32,7 +35,12 @@
     <script>
       (function () {
         const params = new URLSearchParams(window.location.search);
+        const mailStatus = params.get("mail") || "";
         document.querySelector("#return-reference-display").textContent = params.get("ref") || "Not available";
+        if (mailStatus === "active") {
+          document.querySelector("#return-mail-status").textContent =
+            "A confirmation email was also sent where automatic reminders are enabled.";
+        }
       })();
     </script>
   </body>

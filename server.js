@@ -3,12 +3,14 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const { getCheckoutSettings } = require("./api/_checkout");
+const { getNotificationSettings, notifyOrderSubmission, notifyReturnSubmission } = require("./api/_notifications");
 const {
   findOrder,
   getDashboardPassword,
   getPublicOrderView,
   isDashboardAuthorized,
   listOrders,
+  listReturns,
   normalizeOrderLookupQuery,
   normalizeOrderSubmission,
   normalizeReturnSubmission,
@@ -36,6 +38,7 @@ const publicFiles = new Map([
   ["/", "index.html"],
   ["/index.html", "index.html"],
   ["/showcase.html", "showcase.html"],
+  ["/campaign.html", "campaign.html"],
   ["/order-status.html", "order-status.html"],
   ["/returns.html", "returns.html"],
   ["/return-submitted.html", "return-submitted.html"],
@@ -122,11 +125,13 @@ async function generatePayPalAccessToken() {
 
 app.get("/healthz", (request, response) => {
   const checkoutSettings = getCheckoutSettings();
+  const notifications = getNotificationSettings();
   response.json({
     status: "ok",
     checkoutProvider: checkoutSettings.provider,
     checkoutConfigured: checkoutSettings.configured,
     orderDashboardConfigured: Boolean(getDashboardPassword()),
+    emailNotificationsConfigured: notifications.enabled,
     paypalConfigured: Boolean(paypalClientId && paypalClientSecret),
     paypalEnvironment,
     currency
@@ -184,10 +189,26 @@ app.post("/api/orders", async (request, response) => {
 
   try {
     const saved = await saveOrder(normalized.order);
+    let notifications = {
+      enabled: false,
+      merchantSent: false,
+      buyerSent: false
+    };
+
+    try {
+      notifications = await notifyOrderSubmission({
+        ...normalized.order,
+        submittedAt: saved.submittedAt
+      });
+    } catch (notificationError) {
+      console.error(notificationError);
+    }
+
     response.status(201).json({
       ok: true,
       orderReference: saved.orderReference,
-      submittedAt: saved.submittedAt
+      submittedAt: saved.submittedAt,
+      notifications
     });
   } catch (error) {
     console.error(error);
@@ -252,6 +273,30 @@ app.get("/api/orders", async (request, response) => {
   }
 });
 
+app.get("/api/returns", async (request, response) => {
+  if (!isDashboardAuthorized(request)) {
+    sendUnauthorized(response);
+    return;
+  }
+
+  const requestedLimit = Number.parseInt(request.query.limit, 10);
+  const limit = Number.isFinite(requestedLimit) ? Math.max(1, Math.min(200, requestedLimit)) : 100;
+
+  try {
+    const returns = await listReturns(limit);
+    response.json({
+      ok: true,
+      count: returns.length,
+      returns
+    });
+  } catch (error) {
+    console.error(error);
+    response.status(503).json({
+      error: "Unable to load return requests right now."
+    });
+  }
+});
+
 app.post("/api/returns", async (request, response) => {
   const normalized = normalizeReturnSubmission(request.body);
   if (!normalized.valid) {
@@ -291,10 +336,26 @@ app.post("/api/returns", async (request, response) => {
 
     await updateOrderAfterSalesStatus(order, `Return request received (${saved.returnReference})`);
 
+    let notifications = {
+      enabled: false,
+      merchantSent: false,
+      buyerSent: false
+    };
+
+    try {
+      notifications = await notifyReturnSubmission({
+        ...normalized.request,
+        submittedAt: saved.submittedAt
+      });
+    } catch (notificationError) {
+      console.error(notificationError);
+    }
+
     response.status(201).json({
       ok: true,
       returnReference: saved.returnReference,
-      submittedAt: saved.submittedAt
+      submittedAt: saved.submittedAt,
+      notifications
     });
   } catch (error) {
     console.error(error);

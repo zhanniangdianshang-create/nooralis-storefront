@@ -1,15 +1,44 @@
 const {
   findOrder,
+  isDashboardAuthorized,
+  listReturns,
   normalizeOrderLookupQuery,
   normalizeReturnSubmission,
   saveReturnRequest,
   updateOrderAfterSalesStatus
 } = require("../_orders");
+const { notifyReturnSubmission } = require("../_notifications");
 const { readJsonBody, sendJson } = require("../_paypal");
 
 module.exports = async function handler(request, response) {
+  if (request.method === "GET") {
+    if (!isDashboardAuthorized(request)) {
+      response.setHeader("WWW-Authenticate", 'Bearer realm="Nooralis Orders"');
+      sendJson(response, 401, { error: "Unauthorized." });
+      return;
+    }
+
+    const requestedLimit = Number.parseInt(request.query && request.query.limit, 10);
+    const limit = Number.isFinite(requestedLimit) ? Math.max(1, Math.min(200, requestedLimit)) : 100;
+
+    try {
+      const returns = await listReturns(limit);
+      sendJson(response, 200, {
+        ok: true,
+        count: returns.length,
+        returns
+      });
+    } catch (error) {
+      console.error(error);
+      sendJson(response, 503, {
+        error: "Unable to load return requests right now."
+      });
+    }
+    return;
+  }
+
   if (request.method !== "POST") {
-    response.setHeader("Allow", "POST");
+    response.setHeader("Allow", "GET, POST");
     sendJson(response, 405, { error: "Method not allowed." });
     return;
   }
@@ -54,10 +83,26 @@ module.exports = async function handler(request, response) {
 
     await updateOrderAfterSalesStatus(order, `Return request received (${saved.returnReference})`);
 
+    let notifications = {
+      enabled: false,
+      merchantSent: false,
+      buyerSent: false
+    };
+
+    try {
+      notifications = await notifyReturnSubmission({
+        ...normalized.request,
+        submittedAt: saved.submittedAt
+      });
+    } catch (notificationError) {
+      console.error(notificationError);
+    }
+
     sendJson(response, 201, {
       ok: true,
       returnReference: saved.returnReference,
-      submittedAt: saved.submittedAt
+      submittedAt: saved.submittedAt,
+      notifications
     });
   } catch (error) {
     console.error(error);

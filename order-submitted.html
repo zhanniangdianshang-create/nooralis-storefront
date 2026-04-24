@@ -20,6 +20,9 @@
           Our team can now match your PayPal.Me payment with the shipping information you submitted.
           Keep your reference ready for follow-up.
         </p>
+        <p class="status-helper" id="submitted-mail-status">
+          Email reminders are sent when the notification service is active.
+        </p>
         <div class="order-reference-box" aria-label="Saved reference">
           <span class="checkout-provider-label">Reference</span>
           <strong id="submitted-reference">Preparing reference...</strong>
@@ -34,8 +37,13 @@
       (function () {
         const params = new URLSearchParams(window.location.search);
         const reference = params.get("ref") || "Not available";
+        const mailStatus = params.get("mail") || "";
         const target = document.querySelector("#submitted-reference");
+        const mailTarget = document.querySelector("#submitted-mail-status");
         target.textContent = reference;
+        if (mailStatus === "active") {
+          mailTarget.textContent = "A confirmation email was also sent where automatic reminders are enabled.";
+        }
       })();
     </script>
   </body>

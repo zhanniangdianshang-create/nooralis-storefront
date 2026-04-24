@@ -122,6 +122,11 @@ PAYPAL_CLIENT_SECRET=your_live_paypal_secret
 PRODUCT_NAME=Nooralis LED Bionic Butterfly Drone
 PRODUCT_PRICE_CENTS=34900
 PRODUCT_CURRENCY=usd
+RESEND_API_KEY=your_resend_api_key
+NOTIFICATION_EMAIL_FROM=Nooralis <orders@yourdomain.com>
+NOTIFICATION_EMAIL_TO=zhannaingdianshang@gmail.com
+NOTIFICATION_REPLY_TO=zhannaingdianshang@gmail.com
+SEND_BUYER_CONFIRMATION_EMAIL=true
 ```
 
 ## Deploy On Vercel
@@ -134,7 +139,9 @@ PRODUCT_CURRENCY=usd
 6. Open `/healthz` and confirm `status` is `ok`.
 7. Open `/api/checkout/config` and confirm `checkoutProvider` matches the intended gateway.
 8. Open `/orders.html`, enter the dashboard key, and confirm the order inbox loads.
-9. Place a small real hosted-checkout or PayPal order and refund it to verify the live flow.
+9. Open `/returns.html` and confirm the after-sales form loads.
+10. Open `/campaign.html` and confirm the ad landing page renders correctly.
+11. Place a small real hosted-checkout or PayPal order and refund it to verify the live flow.
 
 ## Deploy On Render Later
 
@@ -166,7 +173,7 @@ Only publish videos you own, recorded yourself, received from the supplier with 
 
 ## Before Running Ads
 
-- Set up `sales@nooraliswings.com` or replace it in `config.js`.
+- Set up the inbox for `zhannaingdianshang@gmail.com` or replace it in `config.js`.
 - Add Privacy Policy, Terms, Refund Policy, and Shipping Policy pages.
 - Confirm hosted-checkout onboarding status, settlement account, and withdrawal method.
 - Confirm product shipping cost, delivery time, warranty, and return process.

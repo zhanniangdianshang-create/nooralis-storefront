@@ -411,6 +411,38 @@ async function listBlobOrders(limit = 100) {
   return records.filter(Boolean);
 }
 
+async function listLocalReturns(limit = 100) {
+  try {
+    await fs.mkdir(localReturnDir, { recursive: true });
+    const files = await fs.readdir(localReturnDir);
+    const jsonFiles = files.filter((file) => file.endsWith(".json")).sort().reverse().slice(0, limit);
+    const requests = await Promise.all(
+      jsonFiles.map(async (file) => {
+        const raw = await fs.readFile(path.join(localReturnDir, file), "utf8");
+        return JSON.parse(raw);
+      })
+    );
+    return requests.sort((a, b) => String(b.submittedAt).localeCompare(String(a.submittedAt)));
+  } catch {
+    return [];
+  }
+}
+
+async function listBlobReturns(limit = 100) {
+  const listing = await list({ prefix: "returns/", limit: Math.min(limit, 200) });
+  const sorted = [...listing.blobs].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, limit);
+  const records = await Promise.all(
+    sorted.map(async (blob) => {
+      try {
+        return await parseBlobJson(blob.pathname);
+      } catch {
+        return null;
+      }
+    })
+  );
+  return records.filter(Boolean);
+}
+
 function orderMatchesQuery(record, query) {
   const referenceMatches = String(record.orderReference || "").toUpperCase() === query.orderReference;
   if (!referenceMatches) {
@@ -429,6 +461,13 @@ async function listOrders(limit = 100) {
   return listLocalOrders(limit);
 }
 
+async function listReturns(limit = 100) {
+  if (getOrderStorageMode() === "blob") {
+    return listBlobReturns(limit);
+  }
+  return listLocalReturns(limit);
+}
+
 async function findOrder(query) {
   const orders = await listOrders(500);
   const match = orders.find((record) => orderMatchesQuery(record, query));
@@ -443,6 +482,7 @@ module.exports = {
   getPublicOrderView,
   isDashboardAuthorized,
   listOrders,
+  listReturns,
   normalizeOrderLookupQuery,
   normalizeOrderSubmission,
   normalizeReturnSubmission,

@@ -63,3 +63,17 @@ See `CARD_CHECKOUT_SETUP.md` for the recommended provider path and official link
 - Customer submission page: `/payment-details.html`
 - Private dashboard: `/orders.html`
 - Storage: Vercel Blob private store
+
+## Optional Email Reminders
+
+The site supports automatic merchant and buyer confirmation emails when these are configured:
+
+```env
+RESEND_API_KEY=your_resend_api_key
+NOTIFICATION_EMAIL_FROM=Nooralis <orders@yourdomain.com>
+NOTIFICATION_EMAIL_TO=zhannaingdianshang@gmail.com
+NOTIFICATION_REPLY_TO=zhannaingdianshang@gmail.com
+SEND_BUYER_CONFIRMATION_EMAIL=true
+```
+
+Without these values, orders and returns still save normally. The email layer simply stays inactive.

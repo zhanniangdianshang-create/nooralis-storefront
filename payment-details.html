@@ -100,7 +100,7 @@
           <p class="form-note" id="payment-details-note" role="status" aria-live="polite"></p>
         </form>
         <p class="order-details-help">
-          These details are saved directly to the Nooralis order desk. Keep the reference for any follow-up message.
+          These details are saved directly to the Nooralis order desk. If automatic reminder emails are active, both the buyer and the store inbox will receive a confirmation.
         </p>
         <a class="secondary-button order-details-back" href="index.html#order">Back to Store</a>
       </section>
@@ -250,7 +250,13 @@
               // Ignore storage cleanup issues.
             }
 
-            window.location.href = "order-submitted.html?ref=" + encodeURIComponent(result.orderReference);
+            const notifications = result.notifications || {};
+            const mailStatus = notifications.enabled ? "active" : "inactive";
+            window.location.href =
+              "order-submitted.html?ref=" +
+              encodeURIComponent(result.orderReference) +
+              "&mail=" +
+              encodeURIComponent(mailStatus);
           } catch (error) {
             note.textContent = (error && error.message) || "Could not save the order details. Copy the summary and send it to our team.";
           }

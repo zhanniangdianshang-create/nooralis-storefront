@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nooralis Orders</title>
+    <title>Nooralis Order Desk</title>
     <meta name="robots" content="noindex,nofollow">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -12,11 +12,11 @@
       <section class="section policy-hero">
         <a class="brand" href="index.html" aria-label="Nooralis home">
           <span class="brand-mark" aria-hidden="true"></span>
-          <span>Nooralis Orders</span>
+          <span>Nooralis Order Desk</span>
         </a>
         <p class="section-kicker">Private dashboard</p>
-        <h1>Order submissions</h1>
-        <p>Use your dashboard key to view the latest paid-order submissions collected from the storefront.</p>
+        <h1>Orders and after-sales</h1>
+        <p>Use your dashboard key to view the latest paid-order submissions, return requests, and reminder-email status collected from the storefront.</p>
       </section>
 
       <section class="section order-admin-shell">
@@ -38,17 +38,48 @@
             <strong id="orders-last-sync">Not loaded yet</strong>
           </div>
           <div class="order-reference-box">
-            <span class="checkout-provider-label">Results</span>
+            <span class="checkout-provider-label">Order results</span>
             <strong id="orders-count">0 orders</strong>
+          </div>
+          <div class="order-reference-box">
+            <span class="checkout-provider-label">Return results</span>
+            <strong id="returns-count">0 requests</strong>
+          </div>
+          <div class="order-reference-box">
+            <span class="checkout-provider-label">Email reminders</span>
+            <strong id="notification-status">Checking...</strong>
           </div>
         </div>
 
-        <div class="order-list" id="order-list">
-          <article class="order-card-placeholder">
-            <h2>Orders will appear here</h2>
-            <p>Enter your dashboard key above to load the latest submissions.</p>
-          </article>
-        </div>
+        <section class="order-admin-panel" aria-labelledby="orders-panel-title">
+          <div class="admin-section-head">
+            <div>
+              <span class="checkout-provider-label">Paid-order inbox</span>
+              <h2 id="orders-panel-title">Orders</h2>
+            </div>
+          </div>
+          <div class="order-list" id="order-list">
+            <article class="order-card-placeholder">
+              <h2>Orders will appear here</h2>
+              <p>Enter your dashboard key above to load the latest submissions.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="order-admin-panel" aria-labelledby="returns-panel-title">
+          <div class="admin-section-head">
+            <div>
+              <span class="checkout-provider-label">After-sales inbox</span>
+              <h2 id="returns-panel-title">Return requests</h2>
+            </div>
+          </div>
+          <div class="order-list" id="return-list">
+            <article class="order-card-placeholder">
+              <h2>Return requests will appear here</h2>
+              <p>Verified return and after-sales submissions will load together with the order inbox.</p>
+            </article>
+          </div>
+        </section>
       </section>
     </main>
 
@@ -60,8 +91,11 @@
         const note = document.querySelector("#order-admin-note");
         const keyInput = document.querySelector("#dashboard-key");
         const orderList = document.querySelector("#order-list");
+        const returnList = document.querySelector("#return-list");
         const ordersCount = document.querySelector("#orders-count");
+        const returnsCount = document.querySelector("#returns-count");
         const ordersLastSync = document.querySelector("#orders-last-sync");
+        const notificationStatus = document.querySelector("#notification-status");
 
         function getSavedKey() {
           try {
@@ -133,6 +167,8 @@
                       <h2>${escapeHtml(order.orderReference)}</h2>
                     </div>
                     <div class="order-card-meta">
+                      <span>${escapeHtml(order.orderStatus || "Payment details received")}</span>
+                      <span>${escapeHtml(order.afterSalesStatus || "No return request on file")}</span>
                       <span>${escapeHtml(order.paymentMethod || "Payment submitted")}</span>
                       <span>${escapeHtml(formatDate(order.submittedAt))}</span>
                     </div>
@@ -161,6 +197,61 @@
             .join("");
         }
 
+        function renderReturns(returns) {
+          returnsCount.textContent = returns.length + (returns.length === 1 ? " request" : " requests");
+
+          if (!returns.length) {
+            returnList.innerHTML =
+              '<article class="order-card-placeholder"><h2>No return requests yet</h2><p>Verified after-sales submissions will appear here when buyers use the returns page.</p></article>';
+            return;
+          }
+
+          returnList.innerHTML = returns
+            .map(function (request) {
+              return `
+                <article class="order-card">
+                  <div class="order-card-head">
+                    <div>
+                      <span class="checkout-provider-label">Return reference</span>
+                      <h2>${escapeHtml(request.returnReference)}</h2>
+                    </div>
+                    <div class="order-card-meta">
+                      <span>${escapeHtml(request.returnStatus || "Return request received")}</span>
+                      <span>${escapeHtml(formatDate(request.submittedAt))}</span>
+                    </div>
+                  </div>
+                  <div class="order-card-grid">
+                    <div><strong>Order reference</strong><span>${escapeHtml(request.orderReference)}</span></div>
+                    <div><strong>Buyer</strong><span>${escapeHtml(request.fullName)}</span></div>
+                    <div><strong>Email</strong><span>${escapeHtml(request.email)}</span></div>
+                    <div><strong>Phone</strong><span>${escapeHtml(request.phone || "Not provided")}</span></div>
+                    <div><strong>Reason</strong><span>${escapeHtml(request.returnReason)}</span></div>
+                    <div><strong>Requested resolution</strong><span>${escapeHtml(request.requestedResolution)}</span></div>
+                    <div><strong>Item condition</strong><span>${escapeHtml(request.itemCondition)}</span></div>
+                    <div><strong>Transaction ID</strong><span>${escapeHtml(request.paypalTransactionId)}</span></div>
+                  </div>
+                  <div class="order-card-block">
+                    <strong>Issue details</strong>
+                    <p>${formatMultiline(request.issueDetails)}</p>
+                  </div>
+                </article>
+              `;
+            })
+            .join("");
+        }
+
+        async function loadHealthStatus() {
+          try {
+            const response = await fetch("/healthz");
+            const result = await response.json();
+            notificationStatus.textContent = result.emailNotificationsConfigured
+              ? "Active"
+              : "Inactive - add email service key";
+          } catch {
+            notificationStatus.textContent = "Unavailable";
+          }
+        }
+
         async function loadOrders() {
           const key = keyInput.value.trim();
           if (!key) {
@@ -171,22 +262,31 @@
           note.textContent = "Loading orders...";
 
           try {
-            const response = await fetch("/api/orders?limit=100", {
-              headers: {
-                "x-dashboard-key": key
-              }
-            });
-            const result = await response.json();
+            const headers = {
+              "x-dashboard-key": key
+            };
+            const [ordersResponse, returnsResponse] = await Promise.all([
+              fetch("/api/orders?limit=100", { headers: headers }),
+              fetch("/api/returns?limit=100", { headers: headers }),
+              loadHealthStatus()
+            ]);
+            const result = await ordersResponse.json();
+            const returnsResult = await returnsResponse.json();
 
-            if (!response.ok) {
+            if (!ordersResponse.ok) {
               throw new Error(result.error || "Could not load orders.");
+            }
+
+            if (!returnsResponse.ok) {
+              throw new Error(returnsResult.error || "Could not load return requests.");
             }
 
             saveKey(key);
             renderOrders(result.orders || []);
-            note.textContent = "Orders loaded successfully.";
+            renderReturns(returnsResult.returns || []);
+            note.textContent = "Orders and return requests loaded successfully.";
           } catch (error) {
-            note.textContent = (error && error.message) || "Could not load orders.";
+            note.textContent = (error && error.message) || "Could not load the order desk.";
           }
         }
 
@@ -198,6 +298,7 @@
         });
 
         const savedKey = getSavedKey();
+        loadHealthStatus();
         if (savedKey) {
           keyInput.value = savedKey;
           loadOrders();
