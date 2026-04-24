@@ -29,6 +29,7 @@ const allowedVariants = new Set(["LED performance version", "Standard non-LED ve
 const publicFiles = new Map([
   ["/", "index.html"],
   ["/index.html", "index.html"],
+  ["/showcase.html", "showcase.html"],
   ["/success.html", "success.html"],
   ["/cancel.html", "cancel.html"],
   ["/order-submitted.html", "order-submitted.html"],
@@ -135,6 +136,11 @@ app.get("/sitemap.xml", (request, response) => {
     <loc>${base}/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${base}/showcase.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>${base}/policies.html</loc>
