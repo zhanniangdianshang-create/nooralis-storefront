@@ -47,15 +47,22 @@ Always follow the exact values Vercel shows in the project domain screen.
 
 Use a hosted checkout provider such as **Oceanpayment Payment Links**.
 
+Why this is the current recommendation:
+
+- Oceanpayment's official Payment Links page says it supports **credit cards, debit cards, Apple Pay, Google Pay**, and **500+ payment methods**.
+- Oceanpayment's official company pages emphasize cross-border support and dedicated teams for Chinese merchants.
+- Stripe's official global availability page lists supported merchant countries/regions, and standard China merchant support is not listed there.
+
 Recommended environment:
 
 ```env
 CHECKOUT_PROVIDER=hosted_link
-CHECKOUT_PROVIDER_NAME=Oceanpayment
+CHECKOUT_PROVIDER_NAME=Oceanpayment Card Checkout
+CHECKOUT_ACTION_LABEL=Pay by Credit / Debit Card
 HOSTED_CHECKOUT_URL=your_oceanpayment_payment_link
 HOSTED_CHECKOUT_SINGLE_UNIT_ONLY=true
 ORDER_DASHBOARD_PASSWORD=choose_a_private_dashboard_password
-CHECKOUT_BADGES=Cards|Apple Pay|Google Pay|Localized payment methods
+CHECKOUT_BADGES=Visa|Mastercard|Apple Pay|Google Pay
 ```
 
 This keeps the site simple:
@@ -63,6 +70,20 @@ This keeps the site simple:
 1. The product page stays on your domain.
 2. Buyers click through to the provider's secure hosted checkout page.
 3. Bulk or custom orders still go through the quote form.
+
+Official links:
+
+- Oceanpayment homepage: <https://www.oceanpayment.com/>
+- Oceanpayment Payment Links: <https://www.oceanpayment.com/cn/payment-links/>
+- Oceanpayment self-registration: <https://accounts.oceanpayment.com/service/merchantSelf/register>
+- Oceanpayment contact sales: <https://www.oceanpayment.com/contact-sales>
+- Stripe global availability: <https://stripe.com/global>
+
+Fastest activation path after approval:
+
+```powershell
+.\scripts\set-hosted-card-prod.ps1 -CheckoutUrl "https://your-oceanpayment-link"
+```
 
 ## PayPal Optional Fallback
 

@@ -26,8 +26,10 @@ npm run check
 ```env
 PUBLIC_BASE_URL=https://nooraliswings.com
 CHECKOUT_PROVIDER=hosted_link
-CHECKOUT_PROVIDER_NAME=Oceanpayment
+CHECKOUT_PROVIDER_NAME=Oceanpayment Card Checkout
 HOSTED_CHECKOUT_URL=your_hosted_checkout_link
+CHECKOUT_ACTION_LABEL=Pay by Credit / Debit Card
+CHECKOUT_BADGES=Visa|Mastercard|Apple Pay|Google Pay
 ORDER_DASHBOARD_PASSWORD=choose_a_private_dashboard_password
 PRODUCT_PRICE_CENTS=34900
 PRODUCT_CURRENCY=usd
@@ -45,6 +47,16 @@ PAYPAL_CLIENT_SECRET=your_live_paypal_secret
 
 Use Vercel for the no-card launch path, or a Node.js host such as Render after billing is available.
 See `DEPLOYMENT.md` for the launch checklist.
+
+## Card Checkout Activation
+
+If you get a hosted card checkout link from Oceanpayment or another processor, switch production with:
+
+```powershell
+.\scripts\set-hosted-card-prod.ps1 -CheckoutUrl "https://your-card-checkout-link"
+```
+
+See `CARD_CHECKOUT_SETUP.md` for the recommended provider path and official links.
 
 ## Order Desk
 
