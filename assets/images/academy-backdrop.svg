@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1100" viewBox="0 0 1800 1100" role="img" aria-labelledby="title desc">
+  <title id="title">Nooralis academy backdrop</title>
+  <desc id="desc">Abstract learning backdrop with notebooks, charts, checkmarks, and course cards. No people, faces, logos, creator accounts, or third-party profile references are shown.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfcff"/>
+      <stop offset="0.52" stop-color="#eef6f8"/>
+      <stop offset="1" stop-color="#f8f0ff"/>
+    </linearGradient>
+    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2440"/>
+      <stop offset="1" stop-color="#29365c"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#18b8b2"/>
+      <stop offset="0.55" stop-color="#f0b84f"/>
+      <stop offset="1" stop-color="#e45d44"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#20304d" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+  <rect width="1800" height="1100" fill="url(#bg)"/>
+  <g opacity="0.24">
+    <path d="M0 160h1800M0 320h1800M0 480h1800M0 640h1800M0 800h1800M0 960h1800" stroke="#b8c8d8" stroke-width="2"/>
+    <path d="M180 0v1100M360 0v1100M540 0v1100M720 0v1100M900 0v1100M1080 0v1100M1260 0v1100M1440 0v1100M1620 0v1100" stroke="#d8dce8" stroke-width="2"/>
+  </g>
+  <circle cx="1430" cy="230" r="260" fill="#18b8b2" opacity="0.12"/>
+  <circle cx="1180" cy="870" r="310" fill="#f0b84f" opacity="0.14"/>
+  <circle cx="430" cy="820" r="240" fill="#6f63e8" opacity="0.08"/>
+  <g filter="url(#shadow)">
+    <rect x="820" y="178" width="690" height="570" rx="8" fill="#ffffff" stroke="#dce5ee" stroke-width="2"/>
+    <rect x="860" y="222" width="230" height="318" rx="8" fill="url(#navy)"/>
+    <rect x="1128" y="222" width="318" height="86" rx="8" fill="#eef6f8"/>
+    <rect x="1128" y="338" width="318" height="86" rx="8" fill="#f8f0ff"/>
+    <rect x="1128" y="454" width="318" height="86" rx="8" fill="#fff7e6"/>
+    <rect x="860" y="584" width="586" height="92" rx="8" fill="#f7fafc"/>
+    <path d="M902 286h142M902 330h106M902 374h164M902 418h124" stroke="#ffffff" stroke-opacity="0.72" stroke-width="12" stroke-linecap="round"/>
+    <path d="M1170 265h190M1170 381h170M1170 497h210" stroke="#1b2440" stroke-opacity="0.28" stroke-width="12" stroke-linecap="round"/>
+    <path d="M900 640h120M1064 640h170M1280 640h120" stroke="url(#accent)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M1146 265l22 22 46-56M1146 381l22 22 46-56M1146 497l22 22 46-56" fill="none" stroke="#18b8b2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g filter="url(#shadow)" transform="translate(1090 728) rotate(-5)">
+    <rect width="340" height="210" rx="8" fill="#ffffff" stroke="#dce5ee" stroke-width="2"/>
+    <path d="M46 70h158M46 112h232M46 154h170" stroke="#1b2440" stroke-opacity="0.28" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="274" cy="72" r="28" fill="#e45d44" opacity="0.88"/>
+  </g>
+</svg>
