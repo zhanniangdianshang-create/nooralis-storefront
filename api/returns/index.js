@@ -13,7 +13,7 @@ const { readJsonBody, sendJson } = require("../_paypal");
 module.exports = async function handler(request, response) {
   if (request.method === "GET") {
     if (!isDashboardAuthorized(request)) {
-      response.setHeader("WWW-Authenticate", 'Bearer realm="Nooralis Orders"');
+      response.setHeader("WWW-Authenticate", 'Bearer realm="Nooralis Enrollments"');
       sendJson(response, 401, { error: "Unauthorized." });
       return;
     }
@@ -31,7 +31,7 @@ module.exports = async function handler(request, response) {
     } catch (error) {
       console.error(error);
       sendJson(response, 503, {
-        error: "Unable to load return requests right now."
+      error: "Unable to load support requests right now."
       });
     }
     return;
@@ -62,7 +62,7 @@ module.exports = async function handler(request, response) {
 
   if (!orderLookup.valid) {
     sendJson(response, 400, {
-      error: "Order reference and matching buyer details are required."
+      error: "Enrollment reference and matching buyer details are required."
     });
     return;
   }
@@ -71,17 +71,17 @@ module.exports = async function handler(request, response) {
     const order = await findOrder(orderLookup.query);
     if (!order) {
       sendJson(response, 404, {
-        error: "We could not verify this order. Check the order reference and buyer details."
+        error: "We could not verify this enrollment. Check the enrollment reference and buyer details."
       });
       return;
     }
 
     const saved = await saveReturnRequest({
       ...normalized.request,
-      orderStatusAtRequest: order.orderStatus || "Payment details received"
+      orderStatusAtRequest: order.orderStatus || "Enrollment details received"
     });
 
-    await updateOrderAfterSalesStatus(order, `Return request received (${saved.returnReference})`);
+    await updateOrderAfterSalesStatus(order, `Support request received (${saved.returnReference})`);
 
     let notifications = {
       enabled: false,
@@ -107,7 +107,7 @@ module.exports = async function handler(request, response) {
   } catch (error) {
     console.error(error);
     sendJson(response, 503, {
-      error: "Unable to save the return request right now."
+      error: "Unable to save the support request right now."
     });
   }
 };

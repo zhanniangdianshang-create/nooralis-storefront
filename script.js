@@ -38,6 +38,34 @@ const paymentBadges = document.querySelector("#payment-badges");
 const postPaymentLink = document.querySelector("#post-payment-link");
 const quoteForm = document.querySelector("#quote-form");
 const formNote = document.querySelector("#form-note");
+const mobileStickyCta = document.querySelector(".mobile-sticky-cta");
+const orderCard = document.querySelector("#order");
+
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const id = link.getAttribute("href").slice(1);
+    const target = document.getElementById(id);
+
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.pushState(null, "", `#${id}`);
+  });
+});
+
+if (mobileStickyCta && orderCard && "IntersectionObserver" in window) {
+  const orderObserver = new IntersectionObserver(
+    ([entry]) => {
+      mobileStickyCta.classList.toggle("is-hidden", entry.isIntersecting);
+    },
+    { threshold: 0.18 }
+  );
+
+  orderObserver.observe(orderCard);
+}
 
 let handleCheckoutSubmit = () => {
   if (checkoutNote) {
@@ -48,8 +76,8 @@ let handleCheckoutSubmit = () => {
 function getCheckoutPayload() {
   if (!checkoutForm) {
     return {
-      color: "Golden",
-      variant: "LED performance version",
+      color: "Creator Starter",
+      variant: "Core Course Enrollment",
       quantity: 1,
       email: ""
     };
@@ -245,13 +273,13 @@ function setupHostedCheckout(settings) {
     const payload = getCheckoutPayload();
 
     if (settings.singleUnitOnly && payload.quantity !== 1) {
-      checkoutNote.textContent = `${settings.providerName} checkout is currently set for one kit per payment. Use the quote form below for multiple units.`;
+      checkoutNote.textContent = `${settings.providerName} checkout is currently set for one enrollment per payment. Use the quote form below for team seats.`;
       scrollToQuote();
       return;
     }
 
     rememberCheckoutDraft(payload, settings.providerName);
-    checkoutNote.textContent = `Opening ${settings.providerName} secure checkout. After payment, come back and click "I've Paid - Submit Details".`;
+    checkoutNote.textContent = `Opening ${settings.providerName} secure checkout. After payment, come back and click "I've Paid - Submit Details" to receive course access.`;
 
     if (settings.openInNewTab === false) {
       window.location.href = settings.checkoutUrl;
@@ -305,7 +333,7 @@ async function setupCheckout() {
       providerName: "Sales invoice",
       note: "Online card checkout is temporarily unavailable. Use the quote form below for a secure invoice."
     });
-    renderPaymentBadges(["Secure inquiry", "Custom event support", "Global shipping"]);
+    renderPaymentBadges(["Secure inquiry", "Course access support", "Team enrollment"]);
     setupManualCheckout({
       actionLabel: "Request a Secure Invoice",
       note: error.message || "Secure checkout is temporarily unavailable."
@@ -328,12 +356,12 @@ if (quoteForm && formNote) {
   quoteForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = new FormData(quoteForm);
-    const subject = "Nooralis LED Bionic Butterfly Drone Inquiry";
+    const subject = "Nooralis TIKTOK Course Inquiry";
     const body = [
       `Name: ${data.get("name")}`,
       `Email: ${data.get("email")}`,
-      `Event type: ${data.get("event")}`,
-      `Quantity: ${data.get("quantity")}`,
+      `Goal: ${data.get("event")}`,
+      `Seats: ${data.get("quantity")}`,
       "",
       "Message:",
       data.get("message") || "No additional message provided."

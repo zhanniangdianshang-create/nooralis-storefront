@@ -23,7 +23,7 @@ module.exports = async function handler(request, response) {
     const order = await findOrder(normalized.query);
     if (!order) {
       sendJson(response, 404, {
-        error: "Order not found."
+        error: "Enrollment not found."
       });
       return;
     }
@@ -35,7 +35,7 @@ module.exports = async function handler(request, response) {
   } catch (error) {
     console.error(error);
     sendJson(response, 503, {
-      error: "Unable to load order status right now."
+      error: "Unable to load enrollment status right now."
     });
   }
 };

@@ -3,25 +3,25 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Submit Order Details | Nooralis</title>
+    <title>Submit Enrollment Details | Nooralis TIKTOK Lab</title>
     <meta name="robots" content="noindex,nofollow">
     <link rel="stylesheet" href="styles.css">
     <script src="config.js"></script>
   </head>
-  <body>
+  <body class="course-page">
     <main class="status-page">
       <section class="status-card order-details-card">
-        <a class="brand" href="index.html" aria-label="Nooralis home">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>Nooralis</span>
+        <a class="brand" href="index.html" aria-label="Nooralis TIKTOK Lab home">
+          <span class="brand-mark course-brand-mark" aria-hidden="true"></span>
+          <span>Nooralis TIKTOK Lab</span>
         </a>
         <p class="section-kicker">After payment</p>
-        <h1>Send your shipping details.</h1>
+        <h1>Send your enrollment details.</h1>
         <p class="order-details-intro">
-          After you complete PayPal.Me payment, fill in the details below so our team can match the payment and prepare your Nooralis order.
+          After payment, fill in the details below so we can match your transaction and send course access instructions.
         </p>
-        <div class="order-reference-box" aria-label="Order reference">
-          <span class="checkout-provider-label">Reference</span>
+        <div class="order-reference-box" aria-label="Enrollment reference">
+          <span class="checkout-provider-label">Enrollment reference</span>
           <strong id="order-reference-display">Preparing reference...</strong>
         </div>
         <form class="quote-form order-details-form" id="payment-details-form">
@@ -30,7 +30,7 @@
             <input type="text" name="fullName" autocomplete="name" required>
           </label>
           <label>
-            Email
+            Email for course access
             <input type="email" name="email" autocomplete="email" required>
           </label>
           <label>
@@ -42,32 +42,33 @@
             <input type="text" name="country" autocomplete="country-name" required>
           </label>
           <label>
-            City / state
+            City / time zone
             <input type="text" name="city" autocomplete="address-level2" required>
           </label>
           <label>
-            Postal code
-            <input type="text" name="postalCode" autocomplete="postal-code">
+            Preferred start date
+            <input type="text" name="postalCode" placeholder="Optional">
           </label>
           <label>
-            Wing color
+            Learning track
             <select name="color" required>
-              <option>Golden</option>
-              <option>Pink-Purple</option>
-              <option>Blue</option>
-              <option>Red</option>
-              <option>Custom color inquiry</option>
+              <option>Creator Starter</option>
+              <option>Brand Growth</option>
+              <option>TIKTOK Shop Basics</option>
+              <option>Live Commerce</option>
+              <option>Custom Coaching Inquiry</option>
             </select>
           </label>
           <label>
-            Version
+            Course package
             <select name="variant" required>
-              <option>LED performance version</option>
-              <option>Standard non-LED version</option>
+              <option>Core Course Enrollment</option>
+              <option>Course + Live Clinic</option>
+              <option>Private Accelerator</option>
             </select>
           </label>
           <label>
-            Quantity
+            Seats
             <input type="number" name="quantity" min="1" max="20" value="1" required>
           </label>
           <label>
@@ -75,40 +76,44 @@
             <input type="email" name="paypalPayerEmail" autocomplete="email" placeholder="The email used in PayPal">
           </label>
           <label class="full">
-            Shipping address
-            <textarea name="address" rows="3" autocomplete="street-address" required></textarea>
+            TIKTOK profile or learning goal
+            <textarea
+              name="address"
+              rows="3"
+              placeholder="Paste your account link if available, or describe what you want to learn."
+              required
+            ></textarea>
           </label>
           <label class="full">
             PayPal transaction ID
             <input type="text" name="paypalTransactionId" placeholder="Paste the PayPal transaction ID or payer name" required>
           </label>
           <label class="full">
-            Order notes
+            Enrollment notes
             <textarea
               name="notes"
               rows="5"
-              placeholder="Add event date, preferred delivery timing, custom wing requests, or anything else our team should know."
+              placeholder="Add your niche, target audience, editing level, current social accounts, or team questions."
             ></textarea>
           </label>
           <button class="primary-button full" type="submit">
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13Zm3.1.3 5.9 4.5 5.9-4.5a1 1 0 0 0-.4-.1h-13a1 1 0 0 0-.4.1ZM19 8l-6.4 4.9a1 1 0 0 1-1.2 0L5 8v10.5c0 .3.2.5.5.5h13c.3 0 .5-.2.5-.5V8Z"/>
             </svg>
-            Send Paid Order Details
+            Send Enrollment Details
           </button>
-          <button class="secondary-button full" id="copy-order-summary" type="button">Copy Order Summary</button>
+          <button class="secondary-button full" id="copy-order-summary" type="button">Copy Enrollment Summary</button>
           <p class="form-note" id="payment-details-note" role="status" aria-live="polite"></p>
         </form>
         <p class="order-details-help">
-          These details are saved directly to the Nooralis order desk. If automatic reminder emails are active, both the buyer and the store inbox will receive a confirmation.
+          These details are saved to the Nooralis enrollment desk. If automatic emails are active, both the buyer and the store inbox will receive a confirmation.
         </p>
-        <a class="secondary-button order-details-back" href="index.html#order">Back to Store</a>
+        <a class="secondary-button order-details-back" href="index.html#order">Back to Enrollment</a>
       </section>
     </main>
 
     <script>
       (function () {
-        const config = window.NOORALIS_CONFIG || {};
         const form = document.querySelector("#payment-details-form");
         const note = document.querySelector("#payment-details-note");
         const copyButton = document.querySelector("#copy-order-summary");
@@ -124,7 +129,7 @@
             String(now.getDate()).padStart(2, "0")
           ].join("");
           const random = Math.random().toString(36).slice(2, 7).toUpperCase();
-          return "NRL-" + stamp + "-" + random;
+          return "TTK-" + stamp + "-" + random;
         }
 
         function getReference() {
@@ -176,23 +181,23 @@
         function buildSummary() {
           const data = new FormData(form);
           return [
-            "Paid Nooralis order details",
+            "Paid Nooralis TIKTOK Lab enrollment details",
             "",
             "Reference: " + orderReference,
             "Payment method: PayPal.Me",
-            "Product: Nooralis LED Bionic Butterfly Drone",
-            "Version: " + data.get("variant"),
-            "Wing color: " + data.get("color"),
-            "Quantity: " + data.get("quantity"),
+            "Course: Nooralis TIKTOK Creator Launch Course",
+            "Package: " + data.get("variant"),
+            "Learning track: " + data.get("color"),
+            "Seats: " + data.get("quantity"),
             "",
-            "Buyer details",
+            "Student details",
             "Full name: " + data.get("fullName"),
             "Email: " + data.get("email"),
             "Phone / WhatsApp: " + data.get("phone"),
             "Country / region: " + data.get("country"),
-            "City / state: " + data.get("city"),
-            "Postal code: " + (data.get("postalCode") || "Not provided"),
-            "Shipping address: " + data.get("address"),
+            "City / time zone: " + data.get("city"),
+            "Preferred start date: " + (data.get("postalCode") || "Not provided"),
+            "Profile or learning goal: " + data.get("address"),
             "",
             "Payment proof",
             "PayPal payer email: " + (data.get("paypalPayerEmail") || "Not provided"),
@@ -228,7 +233,7 @@
 
         form.addEventListener("submit", async function (event) {
           event.preventDefault();
-          note.textContent = "Saving your order details...";
+          note.textContent = "Saving your enrollment details...";
 
           try {
             const response = await fetch("/api/orders", {
@@ -241,7 +246,7 @@
             const result = await response.json();
 
             if (!response.ok || !result.ok) {
-              throw new Error(result.error || "Could not save your order details.");
+              throw new Error(result.error || "Could not save your enrollment details.");
             }
 
             try {
@@ -258,14 +263,15 @@
               "&mail=" +
               encodeURIComponent(mailStatus);
           } catch (error) {
-            note.textContent = (error && error.message) || "Could not save the order details. Copy the summary and send it to our team.";
+            note.textContent =
+              (error && error.message) || "Could not save the enrollment details. Copy the summary and send it to our team.";
           }
         });
 
         copyButton.addEventListener("click", async function () {
           try {
             await navigator.clipboard.writeText(buildSummary());
-            note.textContent = "Order summary copied. Keep it as backup if you need to message our team.";
+            note.textContent = "Enrollment summary copied. Keep it as backup if you need to message our team.";
           } catch {
             note.textContent = "Copy was blocked by the browser. Try again or long-press to copy manually.";
           }

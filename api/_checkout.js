@@ -66,13 +66,13 @@ function getCheckoutSettings() {
     note =
       note ||
       (configured
-        ? "Complete your payment with PayPal or a major card."
-        : "PayPal checkout is not configured right now. Use the quote form below while we switch gateways.");
+        ? "Complete your course enrollment with PayPal or a major card."
+        : "PayPal checkout is not configured right now. Use the inquiry form below while we switch gateways.");
     badges = splitBadges(process.env.CHECKOUT_BADGES, [
       "PayPal",
       "Card via PayPal",
-      "Buyer protection",
-      "Global checkout"
+      "Course enrollment",
+      "Secure checkout"
     ]);
     openInNewTab = false;
     paypalConfig = {
@@ -86,7 +86,7 @@ function getCheckoutSettings() {
     note =
       note ||
       (configured
-        ? "Hosted checkout is set up for single-kit online payments. For 2+ kits, urgent shows, or custom finishes, use the quote form below."
+        ? "Hosted checkout is set up for single-seat online enrollment. For team seats or private coaching, use the inquiry form below."
         : `${providerName} checkout is being activated. Use the quote form below while merchant onboarding is completed.`);
     badges = splitBadges(process.env.CHECKOUT_BADGES, [
       "Cards",
@@ -102,12 +102,12 @@ function getCheckoutSettings() {
     actionLabel = actionLabel || "Request a Secure Invoice";
     note =
       note ||
-      "Online card checkout is temporarily unavailable. Use the quote form below and our team will send a secure invoice.";
+      "Online card checkout is temporarily unavailable. Use the inquiry form below and our team will send a secure invoice.";
     badges = splitBadges(process.env.CHECKOUT_BADGES, [
       "Secure inquiry",
       "Card invoice",
-      "Bulk orders",
-      "Global shipping"
+      "Team seats",
+      "Course access support"
     ]);
     openInNewTab = false;
   }

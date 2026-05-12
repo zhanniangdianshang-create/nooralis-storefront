@@ -4,8 +4,14 @@ const path = require("path");
 const { get, list, put } = require("@vercel/blob");
 const { sendJson } = require("./_paypal");
 
-const allowedColors = new Set(["Golden", "Pink-Purple", "Blue", "Red", "Custom color inquiry"]);
-const allowedVariants = new Set(["LED performance version", "Standard non-LED version"]);
+const allowedColors = new Set([
+  "Creator Starter",
+  "Brand Growth",
+  "TIKTOK Shop Basics",
+  "Live Commerce",
+  "Custom Coaching Inquiry"
+]);
+const allowedVariants = new Set(["Core Course Enrollment", "Course + Live Clinic", "Private Accelerator"]);
 const localOrderDir = path.join(__dirname, "..", ".data", "orders");
 const localReturnDir = path.join(__dirname, "..", ".data", "returns");
 
@@ -42,12 +48,12 @@ function createOrderReference() {
     String(now.getUTCDate()).padStart(2, "0")
   ].join("");
   const random = crypto.randomBytes(3).toString("hex").toUpperCase();
-  return `NRL-${stamp}-${random}`;
+  return `TTK-${stamp}-${random}`;
 }
 
 function normalizeOrderReference(value) {
   const cleaned = sanitizeText(value, 40).toUpperCase();
-  if (/^NRL-\d{8}-[A-Z0-9]{4,12}$/.test(cleaned)) {
+  if (/^(TTK|DYN|NRL)-\d{8}-[A-Z0-9]{4,12}$/.test(cleaned)) {
     return cleaned;
   }
   return createOrderReference();
@@ -61,7 +67,7 @@ function createReturnReference() {
     String(now.getUTCDate()).padStart(2, "0")
   ].join("");
   const random = crypto.randomBytes(3).toString("hex").toUpperCase();
-  return `RMA-${stamp}-${random}`;
+  return `SUP-${stamp}-${random}`;
 }
 
 function getDashboardPassword() {
@@ -82,14 +88,14 @@ function isDashboardAuthorized(request) {
 }
 
 function sendUnauthorized(response) {
-  response.setHeader("WWW-Authenticate", 'Bearer realm="Nooralis Orders"');
+  response.setHeader("WWW-Authenticate", 'Bearer realm="Nooralis Enrollments"');
   sendJson(response, 401, { error: "Unauthorized." });
 }
 
 function normalizeOrderSubmission(body = {}) {
   const orderReference = normalizeOrderReference(body.orderReference);
-  const color = allowedColors.has(body.color) ? body.color : "Golden";
-  const variant = allowedVariants.has(body.variant) ? body.variant : "LED performance version";
+  const color = allowedColors.has(body.color) ? body.color : "Creator Starter";
+  const variant = allowedVariants.has(body.variant) ? body.variant : "Core Course Enrollment";
   const quantity = parseQuantity(body.quantity, 1);
   const fullName = sanitizeText(body.fullName, 120);
   const email = sanitizeEmail(body.email);
@@ -208,8 +214,8 @@ function getOrderStorageMode() {
 function buildOrderRecord(order) {
   return {
     ...order,
-    orderStatus: order.orderStatus || "Payment details received",
-    afterSalesStatus: order.afterSalesStatus || "No return request on file",
+    orderStatus: order.orderStatus || "Enrollment details received",
+    afterSalesStatus: order.afterSalesStatus || "No support or refund request on file",
     submittedAt: new Date().toISOString()
   };
 }
@@ -217,7 +223,7 @@ function buildOrderRecord(order) {
 function buildReturnRecord(request) {
   return {
     ...request,
-    returnStatus: request.returnStatus || "Return request received",
+    returnStatus: request.returnStatus || "Support request received",
     submittedAt: new Date().toISOString()
   };
 }
@@ -236,8 +242,8 @@ function maskTransactionId(value) {
 function getPublicOrderView(record) {
   return {
     orderReference: record.orderReference,
-    orderStatus: record.orderStatus || "Payment details received",
-    afterSalesStatus: record.afterSalesStatus || "No return request on file",
+    orderStatus: record.orderStatus || "Enrollment details received",
+    afterSalesStatus: record.afterSalesStatus || "No support or refund request on file",
     submittedAt: record.submittedAt,
     paymentMethod: record.paymentMethod,
     fullName: record.fullName,
@@ -322,7 +328,7 @@ async function updateOrderAfterSalesStatus(record, afterSalesStatus) {
 
   const nextRecord = {
     ...record,
-    afterSalesStatus: sanitizeText(afterSalesStatus, 240) || "Return request received"
+    afterSalesStatus: sanitizeText(afterSalesStatus, 240) || "Support request received"
   };
 
   if (getOrderStorageMode() === "blob") {

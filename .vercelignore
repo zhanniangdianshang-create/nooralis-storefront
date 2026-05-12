@@ -4,6 +4,7 @@ node_modules
 .env
 .env.local
 .data
+artifacts/
 *.zip
 screenshot-*.png
 paypal-*.png

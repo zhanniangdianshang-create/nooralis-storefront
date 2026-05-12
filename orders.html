@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nooralis Order Desk</title>
+    <title>Nooralis Enrollment Desk</title>
     <meta name="robots" content="noindex,nofollow">
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="policy-page">
+  <body class="policy-page course-page">
     <main>
       <section class="section policy-hero">
-        <a class="brand" href="index.html" aria-label="Nooralis home">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>Nooralis Order Desk</span>
+        <a class="brand" href="index.html" aria-label="Nooralis TIKTOK Lab home">
+          <span class="brand-mark course-brand-mark" aria-hidden="true"></span>
+          <span>Nooralis Enrollment Desk</span>
         </a>
         <p class="section-kicker">Private dashboard</p>
-        <h1>Orders and after-sales</h1>
-        <p>Use your dashboard key to view the latest paid-order submissions, return requests, and reminder-email status collected from the storefront.</p>
+        <h1>Enrollments and support</h1>
+        <p>Use your dashboard key to view the latest paid-enrollment submissions, support requests, and reminder-email status collected from the storefront.</p>
       </section>
 
       <section class="section order-admin-shell">
@@ -26,7 +26,7 @@
             <input type="password" id="dashboard-key" autocomplete="current-password" placeholder="Enter your private dashboard key">
           </label>
           <div class="hero-actions">
-            <button class="primary-button" id="load-orders-button" type="button">Load Orders</button>
+            <button class="primary-button" id="load-orders-button" type="button">Load Enrollments</button>
             <button class="secondary-button" id="clear-orders-button" type="button">Clear Saved Key</button>
           </div>
           <p class="form-note" id="order-admin-note" role="status" aria-live="polite"></p>
@@ -38,11 +38,11 @@
             <strong id="orders-last-sync">Not loaded yet</strong>
           </div>
           <div class="order-reference-box">
-            <span class="checkout-provider-label">Order results</span>
-            <strong id="orders-count">0 orders</strong>
+            <span class="checkout-provider-label">Enrollment results</span>
+            <strong id="orders-count">0 enrollments</strong>
           </div>
           <div class="order-reference-box">
-            <span class="checkout-provider-label">Return results</span>
+            <span class="checkout-provider-label">Support results</span>
             <strong id="returns-count">0 requests</strong>
           </div>
           <div class="order-reference-box">
@@ -54,14 +54,14 @@
         <section class="order-admin-panel" aria-labelledby="orders-panel-title">
           <div class="admin-section-head">
             <div>
-              <span class="checkout-provider-label">Paid-order inbox</span>
-              <h2 id="orders-panel-title">Orders</h2>
+              <span class="checkout-provider-label">Paid-enrollment inbox</span>
+              <h2 id="orders-panel-title">Enrollments</h2>
             </div>
           </div>
           <div class="order-list" id="order-list">
             <article class="order-card-placeholder">
-              <h2>Orders will appear here</h2>
-              <p>Enter your dashboard key above to load the latest submissions.</p>
+              <h2>Enrollments will appear here</h2>
+              <p>Enter your dashboard key above to load the latest course submissions.</p>
             </article>
           </div>
         </section>
@@ -69,14 +69,14 @@
         <section class="order-admin-panel" aria-labelledby="returns-panel-title">
           <div class="admin-section-head">
             <div>
-              <span class="checkout-provider-label">After-sales inbox</span>
-              <h2 id="returns-panel-title">Return requests</h2>
+              <span class="checkout-provider-label">Support inbox</span>
+              <h2 id="returns-panel-title">Support requests</h2>
             </div>
           </div>
           <div class="order-list" id="return-list">
             <article class="order-card-placeholder">
-              <h2>Return requests will appear here</h2>
-              <p>Verified return and after-sales submissions will load together with the order inbox.</p>
+              <h2>Support requests will appear here</h2>
+              <p>Verified support and refund submissions will load together with the enrollment inbox.</p>
             </article>
           </div>
         </section>
@@ -149,11 +149,11 @@
         }
 
         function renderOrders(orders) {
-          ordersCount.textContent = orders.length + (orders.length === 1 ? " order" : " orders");
+          ordersCount.textContent = orders.length + (orders.length === 1 ? " enrollment" : " enrollments");
           ordersLastSync.textContent = formatDate(new Date().toISOString());
 
           if (!orders.length) {
-            orderList.innerHTML = '<article class="order-card-placeholder"><h2>No orders yet</h2><p>New paid-order submissions will appear here after customers finish the form.</p></article>';
+            orderList.innerHTML = '<article class="order-card-placeholder"><h2>No enrollments yet</h2><p>New paid-enrollment submissions will appear here after customers finish the form.</p></article>';
             return;
           }
 
@@ -167,24 +167,24 @@
                       <h2>${escapeHtml(order.orderReference)}</h2>
                     </div>
                     <div class="order-card-meta">
-                      <span>${escapeHtml(order.orderStatus || "Payment details received")}</span>
-                      <span>${escapeHtml(order.afterSalesStatus || "No return request on file")}</span>
+                      <span>${escapeHtml(order.orderStatus || "Enrollment details received")}</span>
+                      <span>${escapeHtml(order.afterSalesStatus || "No support or refund request on file")}</span>
                       <span>${escapeHtml(order.paymentMethod || "Payment submitted")}</span>
                       <span>${escapeHtml(formatDate(order.submittedAt))}</span>
                     </div>
                   </div>
                   <div class="order-card-grid">
-                    <div><strong>Buyer</strong><span>${escapeHtml(order.fullName)}</span></div>
+                    <div><strong>Student</strong><span>${escapeHtml(order.fullName)}</span></div>
                     <div><strong>Email</strong><span>${escapeHtml(order.email)}</span></div>
                     <div><strong>Phone</strong><span>${escapeHtml(order.phone)}</span></div>
-                    <div><strong>Country / city</strong><span>${escapeHtml(order.country)} / ${escapeHtml(order.city)}</span></div>
-                    <div><strong>Product</strong><span>${escapeHtml(order.variant)} / ${escapeHtml(order.color)}</span></div>
-                    <div><strong>Quantity</strong><span>${escapeHtml(order.quantity)}</span></div>
+                    <div><strong>Country / time zone</strong><span>${escapeHtml(order.country)} / ${escapeHtml(order.city)}</span></div>
+                    <div><strong>Course</strong><span>${escapeHtml(order.variant)} / ${escapeHtml(order.color)}</span></div>
+                    <div><strong>Seats</strong><span>${escapeHtml(order.quantity)}</span></div>
                     <div><strong>PayPal payer email</strong><span>${escapeHtml(order.paypalPayerEmail || "Not provided")}</span></div>
                     <div><strong>Transaction ID</strong><span>${escapeHtml(order.paypalTransactionId)}</span></div>
                   </div>
                   <div class="order-card-block">
-                    <strong>Shipping address</strong>
+                    <strong>Profile / learning goal</strong>
                     <p>${formatMultiline(order.address)}</p>
                   </div>
                   <div class="order-card-block">
@@ -202,7 +202,7 @@
 
           if (!returns.length) {
             returnList.innerHTML =
-              '<article class="order-card-placeholder"><h2>No return requests yet</h2><p>Verified after-sales submissions will appear here when buyers use the returns page.</p></article>';
+              '<article class="order-card-placeholder"><h2>No support requests yet</h2><p>Verified support and refund submissions will appear here when buyers use the support page.</p></article>';
             return;
           }
 
@@ -212,17 +212,17 @@
                 <article class="order-card">
                   <div class="order-card-head">
                     <div>
-                      <span class="checkout-provider-label">Return reference</span>
+                      <span class="checkout-provider-label">Support reference</span>
                       <h2>${escapeHtml(request.returnReference)}</h2>
                     </div>
                     <div class="order-card-meta">
-                      <span>${escapeHtml(request.returnStatus || "Return request received")}</span>
+                      <span>${escapeHtml(request.returnStatus || "Support request received")}</span>
                       <span>${escapeHtml(formatDate(request.submittedAt))}</span>
                     </div>
                   </div>
                   <div class="order-card-grid">
-                    <div><strong>Order reference</strong><span>${escapeHtml(request.orderReference)}</span></div>
-                    <div><strong>Buyer</strong><span>${escapeHtml(request.fullName)}</span></div>
+                    <div><strong>Enrollment reference</strong><span>${escapeHtml(request.orderReference)}</span></div>
+                    <div><strong>Student</strong><span>${escapeHtml(request.fullName)}</span></div>
                     <div><strong>Email</strong><span>${escapeHtml(request.email)}</span></div>
                     <div><strong>Phone</strong><span>${escapeHtml(request.phone || "Not provided")}</span></div>
                     <div><strong>Reason</strong><span>${escapeHtml(request.returnReason)}</span></div>
@@ -259,7 +259,7 @@
             return;
           }
 
-          note.textContent = "Loading orders...";
+            note.textContent = "Loading enrollments...";
 
           try {
             const headers = {
@@ -274,19 +274,19 @@
             const returnsResult = await returnsResponse.json();
 
             if (!ordersResponse.ok) {
-              throw new Error(result.error || "Could not load orders.");
+              throw new Error(result.error || "Could not load enrollments.");
             }
 
             if (!returnsResponse.ok) {
-              throw new Error(returnsResult.error || "Could not load return requests.");
+              throw new Error(returnsResult.error || "Could not load support requests.");
             }
 
             saveKey(key);
             renderOrders(result.orders || []);
             renderReturns(returnsResult.returns || []);
-            note.textContent = "Orders and return requests loaded successfully.";
+            note.textContent = "Enrollments and support requests loaded successfully.";
           } catch (error) {
-            note.textContent = (error && error.message) || "Could not load the order desk.";
+            note.textContent = (error && error.message) || "Could not load the enrollment desk.";
           }
         }
 

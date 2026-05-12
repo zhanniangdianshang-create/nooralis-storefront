@@ -25,15 +25,21 @@ const port = process.env.PORT || 3000;
 const configuredPublicBaseUrl = (process.env.PUBLIC_BASE_URL || "").replace(/\/+$/, "");
 const unitAmountCents = Number(process.env.PRODUCT_PRICE_CENTS || 34900);
 const currency = (process.env.PRODUCT_CURRENCY || "USD").toUpperCase();
-const productName = process.env.PRODUCT_NAME || "Nooralis LED Bionic Butterfly Drone";
+const productName = process.env.PRODUCT_NAME || "Nooralis TIKTOK Creator Launch Course";
 const paypalClientId = process.env.PAYPAL_CLIENT_ID || "";
 const paypalClientSecret = process.env.PAYPAL_CLIENT_SECRET || "";
 const paypalEnvironment = (process.env.PAYPAL_ENVIRONMENT || "sandbox").toLowerCase();
 const paypalBaseUrl =
   paypalEnvironment === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 
-const allowedColors = new Set(["Golden", "Pink-Purple", "Blue", "Red", "Custom color inquiry"]);
-const allowedVariants = new Set(["LED performance version", "Standard non-LED version"]);
+const allowedColors = new Set([
+  "Creator Starter",
+  "Brand Growth",
+  "TIKTOK Shop Basics",
+  "Live Commerce",
+  "Custom Coaching Inquiry"
+]);
+const allowedVariants = new Set(["Core Course Enrollment", "Course + Live Clinic", "Private Accelerator"]);
 const publicFiles = new Map([
   ["/", "index.html"],
   ["/index.html", "index.html"],
@@ -50,7 +56,11 @@ const publicFiles = new Map([
   ["/policies.html", "policies.html"],
   ["/styles.css", "styles.css"],
   ["/script.js", "script.js"],
-  ["/config.js", "config.js"]
+  ["/config.js", "config.js"],
+  ["/tiktok_front.png", "tiktok_front.png"],
+  ["/tiktok_search_dianshangyunying.png", "tiktok_search_dianshangyunying.png"],
+  ["/tiktok_search_mostlikes.png", "tiktok_search_mostlikes.png"],
+  ["/tiktok_profile_muzi_loaded.png", "tiktok_profile_muzi_loaded.png"]
 ]);
 
 app.set("trust proxy", 1);
@@ -75,8 +85,8 @@ app.use(
 );
 
 function normalizeOrderInput(body) {
-  const color = allowedColors.has(body.color) ? body.color : "Golden";
-  const variant = allowedVariants.has(body.variant) ? body.variant : "LED performance version";
+  const color = allowedColors.has(body.color) ? body.color : "Creator Starter";
+  const variant = allowedVariants.has(body.variant) ? body.variant : "Core Course Enrollment";
   const parsedQuantity = Number.parseInt(body.quantity, 10);
   const quantity = Number.isFinite(parsedQuantity) ? Math.max(1, Math.min(20, parsedQuantity)) : 1;
   const email = String(body.email || "").trim();
@@ -213,7 +223,7 @@ app.post("/api/orders", async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(503).json({
-      error: "Unable to save order details right now."
+      error: "Unable to save enrollment details right now."
     });
   }
 });
@@ -232,7 +242,7 @@ app.post("/api/orders/status", async (request, response) => {
     const order = await findOrder(normalized.query);
     if (!order) {
       response.status(404).json({
-        error: "Order not found."
+        error: "Enrollment not found."
       });
       return;
     }
@@ -244,7 +254,7 @@ app.post("/api/orders/status", async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(503).json({
-      error: "Unable to load order status right now."
+      error: "Unable to load enrollment status right now."
     });
   }
 });
@@ -268,7 +278,7 @@ app.get("/api/orders", async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(503).json({
-      error: "Unable to load orders right now."
+      error: "Unable to load enrollments right now."
     });
   }
 });
@@ -292,7 +302,7 @@ app.get("/api/returns", async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(503).json({
-      error: "Unable to load return requests right now."
+      error: "Unable to load support requests right now."
     });
   }
 });
@@ -331,10 +341,10 @@ app.post("/api/returns", async (request, response) => {
 
     const saved = await saveReturnRequest({
       ...normalized.request,
-      orderStatusAtRequest: order.orderStatus || "Payment details received"
+      orderStatusAtRequest: order.orderStatus || "Enrollment details received"
     });
 
-    await updateOrderAfterSalesStatus(order, `Return request received (${saved.returnReference})`);
+    await updateOrderAfterSalesStatus(order, `Support request received (${saved.returnReference})`);
 
     let notifications = {
       enabled: false,
@@ -360,7 +370,7 @@ app.post("/api/returns", async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(503).json({
-      error: "Unable to save the return request right now."
+      error: "Unable to save the support request right now."
     });
   }
 });
@@ -383,7 +393,7 @@ app.post("/api/paypal/orders", async (request, response) => {
         intent: "CAPTURE",
         purchase_units: [
           {
-            reference_id: "NOORALIS-PERFORMANCE-KIT",
+            reference_id: "NOORALIS-TIKTOK-COURSE",
             description: `${productName} - ${variant} / ${color}`,
             custom_id: `${variant} | ${color}`,
             amount: {
@@ -405,19 +415,19 @@ app.post("/api/paypal/orders", async (request, response) => {
                   currency_code: currency,
                   value: unitAmount
                 },
-                category: "PHYSICAL_GOODS"
+                category: "DIGITAL_GOODS"
               }
             ]
           }
         ],
         payer: email ? { email_address: email } : undefined,
         application_context: {
-          brand_name: "Nooralis",
+          brand_name: "Nooralis TIKTOK Lab",
           landing_page: "BILLING",
           user_action: "PAY_NOW",
           return_url: `${publicBaseUrl}/success.html`,
           cancel_url: `${publicBaseUrl}/cancel.html`,
-          shipping_preference: "GET_FROM_FILE"
+          shipping_preference: "NO_SHIPPING"
         }
       })
     });
@@ -484,7 +494,7 @@ app.get(Array.from(publicFiles.keys()), (request, response) => {
 
 app.listen(port, () => {
   const checkoutSettings = getCheckoutSettings();
-  console.log(`Nooralis storefront running at http://localhost:${port}`);
+  console.log(`Nooralis TIKTOK Lab storefront running at http://localhost:${port}`);
   if (!checkoutSettings.configured) {
     console.log(
       `${checkoutSettings.providerName} checkout is not configured. Add HOSTED_CHECKOUT_URL or working gateway credentials to enable online payments.`

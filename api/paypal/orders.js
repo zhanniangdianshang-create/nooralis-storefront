@@ -32,7 +32,7 @@ module.exports = async function handler(request, response) {
         intent: "CAPTURE",
         purchase_units: [
           {
-            reference_id: "NOORALIS-PERFORMANCE-KIT",
+            reference_id: "NOORALIS-TIKTOK-COURSE",
             description: `${settings.productName} - ${variant} / ${color}`,
             custom_id: `${variant} | ${color}`,
             amount: {
@@ -54,19 +54,19 @@ module.exports = async function handler(request, response) {
                   currency_code: settings.currency,
                   value: unitAmount
                 },
-                category: "PHYSICAL_GOODS"
+                category: "DIGITAL_GOODS"
               }
             ]
           }
         ],
         payer: email ? { email_address: email } : undefined,
         application_context: {
-          brand_name: "Nooralis",
+          brand_name: "Nooralis TIKTOK Lab",
           landing_page: "BILLING",
           user_action: "PAY_NOW",
           return_url: `${settings.publicBaseUrl}/success.html`,
           cancel_url: `${settings.publicBaseUrl}/cancel.html`,
-          shipping_preference: "GET_FROM_FILE"
+          shipping_preference: "NO_SHIPPING"
         }
       })
     });

@@ -14,6 +14,7 @@ render-login-*.txt
 vercel-login-*.txt
 .tools/
 .data/
+artifacts/
 .vercel/
 
 .vercel

@@ -1,5 +1,11 @@
-const allowedColors = new Set(["Golden", "Pink-Purple", "Blue", "Red", "Custom color inquiry"]);
-const allowedVariants = new Set(["LED performance version", "Standard non-LED version"]);
+const allowedColors = new Set([
+  "Creator Starter",
+  "Brand Growth",
+  "TIKTOK Shop Basics",
+  "Live Commerce",
+  "Custom Coaching Inquiry"
+]);
+const allowedVariants = new Set(["Core Course Enrollment", "Course + Live Clinic", "Private Accelerator"]);
 
 function getPayPalSettings() {
   const paypalEnvironment = (process.env.PAYPAL_ENVIRONMENT || "sandbox").toLowerCase();
@@ -10,15 +16,15 @@ function getPayPalSettings() {
     paypalEnvironment,
     paypalBaseUrl: paypalEnvironment === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com",
     currency: (process.env.PRODUCT_CURRENCY || "USD").toUpperCase(),
-    productName: process.env.PRODUCT_NAME || "Nooralis LED Bionic Butterfly Drone",
+    productName: process.env.PRODUCT_NAME || "Nooralis TIKTOK Creator Launch Course",
     unitAmountCents: Number(process.env.PRODUCT_PRICE_CENTS || 34900),
     publicBaseUrl: (process.env.PUBLIC_BASE_URL || "https://nooraliswings.com").replace(/\/+$/, "")
   };
 }
 
 function normalizeOrderInput(body = {}) {
-  const color = allowedColors.has(body.color) ? body.color : "Golden";
-  const variant = allowedVariants.has(body.variant) ? body.variant : "LED performance version";
+  const color = allowedColors.has(body.color) ? body.color : "Creator Starter";
+  const variant = allowedVariants.has(body.variant) ? body.variant : "Core Course Enrollment";
   const parsedQuantity = Number.parseInt(body.quantity, 10);
   const quantity = Number.isFinite(parsedQuantity) ? Math.max(1, Math.min(20, parsedQuantity)) : 1;
   const email = String(body.email || "").trim();

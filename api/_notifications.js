@@ -92,22 +92,22 @@ async function sendResendEmail(payload, settings = getNotificationSettings()) {
 
 function buildOrderMerchantEmail(order) {
   return {
-    subject: `New Nooralis order submitted: ${order.orderReference}`,
+    subject: `New Nooralis course enrollment submitted: ${order.orderReference}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #171717;">
-        <h2 style="margin-bottom: 12px;">New order details received</h2>
-        <p>A customer completed the Nooralis paid-order form.</p>
+        <h2 style="margin-bottom: 12px;">New enrollment details received</h2>
+        <p>A customer completed the Nooralis TIKTOK Lab paid-enrollment form.</p>
         <table style="border-collapse: collapse; width: 100%; max-width: 720px;">
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Reference</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.orderReference)}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Submitted</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(formatDate(order.submittedAt))}</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Buyer</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.fullName)}</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Student</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.fullName)}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Email</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.email)}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Phone</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.phone)}</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Product</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.variant)} / ${escapeHtml(order.color)} / Qty ${escapeHtml(order.quantity)}</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Country / city</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.country)} / ${escapeHtml(order.city)}</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Course</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.variant)} / ${escapeHtml(order.color)} / Seats ${escapeHtml(order.quantity)}</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Country / time zone</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.country)} / ${escapeHtml(order.city)}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Payment method</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.paymentMethod || "PayPal.Me")}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Transaction ID</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.paypalTransactionId)}</td></tr>
-          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Address</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.address).replace(/\n/g, "<br>")}</td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Profile / learning goal</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.address).replace(/\n/g, "<br>")}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Notes</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(order.notes || "No additional notes.").replace(/\n/g, "<br>")}</td></tr>
         </table>
       </div>
@@ -117,15 +117,15 @@ function buildOrderMerchantEmail(order) {
 
 function buildOrderBuyerEmail(order) {
   return {
-    subject: `Nooralis order details received: ${order.orderReference}`,
+    subject: `Nooralis course enrollment received: ${order.orderReference}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #171717;">
-        <h2 style="margin-bottom: 12px;">We received your Nooralis order details</h2>
-        <p>Thank you. Your paid-order details are now in the Nooralis order desk.</p>
+        <h2 style="margin-bottom: 12px;">We received your Nooralis TIKTOK Lab enrollment details</h2>
+        <p>Thank you. Your paid-enrollment details are now in the Nooralis course desk.</p>
         <p><strong>Reference:</strong> ${escapeHtml(order.orderReference)}</p>
-        <p><strong>Configuration:</strong> ${escapeHtml(order.variant)} / ${escapeHtml(order.color)} / Qty ${escapeHtml(order.quantity)}</p>
-        <p><strong>Next step:</strong> We review the submission, match the payment, and then confirm the shipping or production step.</p>
-        <p>If you need to follow up, reply to this email with your order reference.</p>
+        <p><strong>Course:</strong> ${escapeHtml(order.variant)} / ${escapeHtml(order.color)} / Seats ${escapeHtml(order.quantity)}</p>
+        <p><strong>Next step:</strong> We review the submission, match the payment, and then send course access instructions.</p>
+        <p>If you need to follow up, reply to this email with your enrollment reference.</p>
       </div>
     `
   };
@@ -133,10 +133,10 @@ function buildOrderBuyerEmail(order) {
 
 function buildReturnMerchantEmail(request) {
   return {
-    subject: `New Nooralis return request: ${request.returnReference}`,
+    subject: `New Nooralis course support request: ${request.returnReference}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #171717;">
-        <h2 style="margin-bottom: 12px;">New return / after-sales request</h2>
+        <h2 style="margin-bottom: 12px;">New support / refund request</h2>
         <table style="border-collapse: collapse; width: 100%; max-width: 720px;">
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Return reference</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(request.returnReference)}</td></tr>
           <tr><td style="padding: 8px; border: 1px solid #ded8cb;"><strong>Order reference</strong></td><td style="padding: 8px; border: 1px solid #ded8cb;">${escapeHtml(request.orderReference)}</td></tr>
@@ -154,13 +154,13 @@ function buildReturnMerchantEmail(request) {
 
 function buildReturnBuyerEmail(request) {
   return {
-    subject: `Nooralis return request received: ${request.returnReference}`,
+    subject: `Nooralis support request received: ${request.returnReference}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #171717;">
-        <h2 style="margin-bottom: 12px;">We received your return / after-sales request</h2>
-        <p>Your Nooralis service request is now in review.</p>
-        <p><strong>Return reference:</strong> ${escapeHtml(request.returnReference)}</p>
-        <p><strong>Order reference:</strong> ${escapeHtml(request.orderReference)}</p>
+        <h2 style="margin-bottom: 12px;">We received your support / refund request</h2>
+        <p>Your Nooralis course support request is now in review.</p>
+        <p><strong>Support reference:</strong> ${escapeHtml(request.returnReference)}</p>
+        <p><strong>Enrollment reference:</strong> ${escapeHtml(request.orderReference)}</p>
         <p><strong>Requested resolution:</strong> ${escapeHtml(request.requestedResolution)}</p>
         <p>The team will review the request and contact you with the next step.</p>
       </div>

@@ -47,7 +47,7 @@ module.exports = async function handler(request, response) {
     } catch (error) {
       console.error(error);
       sendJson(response, 503, {
-        error: "Unable to save order details right now."
+        error: "Unable to save enrollment details right now."
       });
     }
     return;
@@ -72,7 +72,7 @@ module.exports = async function handler(request, response) {
     } catch (error) {
       console.error(error);
       sendJson(response, 503, {
-        error: "Unable to load orders right now."
+        error: "Unable to load enrollments right now."
       });
     }
     return;
