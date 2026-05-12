@@ -20,13 +20,17 @@ document.querySelectorAll(".video-card video").forEach((video) => {
   });
 });
 
-const priceDisplay = document.querySelector("[data-price-display]");
-if (priceDisplay && Number.isFinite(config.unitPriceCents)) {
-  priceDisplay.textContent = new Intl.NumberFormat("en-US", {
+const priceDisplays = document.querySelectorAll("[data-price-display]");
+if (priceDisplays.length && Number.isFinite(config.unitPriceCents)) {
+  const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: config.currency || "USD",
     maximumFractionDigits: 0
   }).format(config.unitPriceCents / 100);
+
+  priceDisplays.forEach((priceDisplay) => {
+    priceDisplay.textContent = formattedPrice;
+  });
 }
 
 const checkoutForm = document.querySelector("#checkout-form");
