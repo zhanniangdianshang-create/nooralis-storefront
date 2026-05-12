@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Nooralis abstract course backdrop</title>
+  <desc id="desc">Abstract technology backdrop with grid, light trails, and chart-like geometry. It contains no people, faces, logos, account names, or third-party creator references.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05080d"/>
+      <stop offset="0.55" stop-color="#071019"/>
+      <stop offset="1" stop-color="#101019"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22f7ff"/>
+      <stop offset="0.55" stop-color="#77ff91"/>
+      <stop offset="1" stop-color="#ff355d"/>
+    </linearGradient>
+    <filter id="blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <g opacity="0.28">
+    <path d="M0 110h1600M0 220h1600M0 330h1600M0 440h1600M0 550h1600M0 660h1600M0 770h1600M0 880h1600" stroke="#22f7ff" stroke-width="1"/>
+    <path d="M110 0v1000M220 0v1000M330 0v1000M440 0v1000M550 0v1000M660 0v1000M770 0v1000M880 0v1000M990 0v1000M1100 0v1000M1210 0v1000M1320 0v1000M1430 0v1000M1540 0v1000" stroke="#ff355d" stroke-width="1"/>
+  </g>
+  <circle cx="1240" cy="230" r="240" fill="#22f7ff" opacity="0.1" filter="url(#blur)"/>
+  <circle cx="980" cy="760" r="300" fill="#ff355d" opacity="0.08" filter="url(#blur)"/>
+  <circle cx="360" cy="820" r="220" fill="#77ff91" opacity="0.07" filter="url(#blur)"/>
+  <path d="M870 650c110-150 260-194 440-132 96 34 172 36 230 4" fill="none" stroke="url(#signal)" stroke-width="10" stroke-linecap="round" opacity="0.42"/>
+  <path d="M1010 270h360M930 350h470M1050 430h280" stroke="#22f7ff" stroke-width="2" stroke-linecap="round" opacity="0.26"/>
+  <g transform="translate(900 520)" opacity="0.45">
+    <rect x="0" y="110" width="46" height="170" rx="23" fill="#ff355d"/>
+    <rect x="84" y="52" width="46" height="228" rx="23" fill="#ffd166"/>
+    <rect x="168" y="142" width="46" height="138" rx="23" fill="#22f7ff"/>
+    <rect x="252" y="82" width="46" height="198" rx="23" fill="#77ff91"/>
+    <path d="M-20 288h340" stroke="#dffcff" stroke-width="2" opacity="0.28"/>
+  </g>
+  <rect x="780" y="200" width="640" height="520" rx="34" fill="#08121c" stroke="#22f7ff" stroke-opacity="0.25" stroke-width="2" opacity="0.66"/>
+  <rect x="860" y="270" width="220" height="140" rx="18" fill="#0e1b28" stroke="#22f7ff" stroke-opacity="0.22"/>
+  <rect x="1110" y="270" width="220" height="140" rx="18" fill="#0e1b28" stroke="#22f7ff" stroke-opacity="0.22"/>
+  <rect x="860" y="450" width="470" height="140" rx="18" fill="#0e1b28" stroke="#22f7ff" stroke-opacity="0.22"/>
+</svg>

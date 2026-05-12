@@ -56,11 +56,7 @@ const publicFiles = new Map([
   ["/policies.html", "policies.html"],
   ["/styles.css", "styles.css"],
   ["/script.js", "script.js"],
-  ["/config.js", "config.js"],
-  ["/tiktok_front.png", "tiktok_front.png"],
-  ["/tiktok_search_dianshangyunying.png", "tiktok_search_dianshangyunying.png"],
-  ["/tiktok_search_mostlikes.png", "tiktok_search_mostlikes.png"],
-  ["/tiktok_profile_muzi_loaded.png", "tiktok_profile_muzi_loaded.png"]
+  ["/config.js", "config.js"]
 ]);
 
 app.set("trust proxy", 1);

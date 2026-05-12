@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="960" viewBox="0 0 1400 960" role="img" aria-labelledby="title desc">
+  <title id="title">Nooralis research board</title>
+  <desc id="desc">Abstract research board with trend scores, comment themes, and content planning blocks. It contains no people, faces, profile photos, or third-party account names.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7fbfd"/>
+      <stop offset="1" stop-color="#dff6f8"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071019"/>
+      <stop offset="1" stop-color="#112433"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22f7ff"/>
+      <stop offset="1" stop-color="#77ff91"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="960" rx="34" fill="url(#bg)"/>
+  <g opacity="0.45">
+    <path d="M80 120h1240M80 240h1240M80 360h1240M80 480h1240M80 600h1240M80 720h1240M80 840h1240" stroke="#b4d9df" stroke-width="2"/>
+    <path d="M160 80v800M320 80v800M480 80v800M640 80v800M800 80v800M960 80v800M1120 80v800M1280 80v800" stroke="#d1edf0" stroke-width="2"/>
+  </g>
+  <rect x="90" y="90" width="1220" height="780" rx="28" fill="#ffffff" stroke="#a7cfd6" stroke-width="2"/>
+  <rect x="90" y="90" width="1220" height="92" rx="28" fill="url(#ink)"/>
+  <text x="140" y="150" fill="#f7fbff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Research Board</text>
+  <rect x="1010" y="124" width="210" height="26" rx="13" fill="url(#signal)"/>
+  <g transform="translate(140 230)">
+    <text x="0" y="0" fill="#006b82" font-family="Arial, sans-serif" font-size="20" font-weight="700">Topic Scores</text>
+    <rect x="0" y="34" width="320" height="150" rx="18" fill="#eff9fa"/>
+    <path d="M34 122c42-58 84-28 126-64 44-38 86-18 128-72" fill="none" stroke="#ff355d" stroke-width="8" stroke-linecap="round"/>
+    <path d="M34 132h250" stroke="#bddce2" stroke-width="2"/>
+    <path d="M34 84h250" stroke="#bddce2" stroke-width="2"/>
+  </g>
+  <g transform="translate(530 230)">
+    <text x="0" y="0" fill="#006b82" font-family="Arial, sans-serif" font-size="20" font-weight="700">Content Angles</text>
+    <rect x="0" y="34" width="320" height="150" rx="18" fill="#eff9fa"/>
+    <rect x="28" y="62" width="118" height="18" rx="9" fill="#22f7ff"/>
+    <rect x="28" y="98" width="224" height="12" rx="6" fill="#081014" opacity="0.24"/>
+    <rect x="28" y="128" width="178" height="12" rx="6" fill="#081014" opacity="0.18"/>
+    <rect x="28" y="158" width="210" height="12" rx="6" fill="#081014" opacity="0.18"/>
+  </g>
+  <g transform="translate(920 230)">
+    <text x="0" y="0" fill="#006b82" font-family="Arial, sans-serif" font-size="20" font-weight="700">Review Signals</text>
+    <rect x="0" y="34" width="320" height="150" rx="18" fill="#eff9fa"/>
+    <circle cx="72" cy="112" r="42" fill="#22f7ff" opacity="0.22"/>
+    <circle cx="160" cy="112" r="42" fill="#ff355d" opacity="0.2"/>
+    <circle cx="248" cy="112" r="42" fill="#77ff91" opacity="0.24"/>
+  </g>
+  <g transform="translate(140 485)">
+    <text x="0" y="0" fill="#006b82" font-family="Arial, sans-serif" font-size="20" font-weight="700">30-Day Plan</text>
+    <g transform="translate(0 38)" fill="#f1fbfc" stroke="#c4dfe5" stroke-width="2">
+      <rect width="150" height="92" rx="14"/>
+      <rect x="176" width="150" height="92" rx="14"/>
+      <rect x="352" width="150" height="92" rx="14"/>
+      <rect x="528" width="150" height="92" rx="14"/>
+      <rect x="704" width="150" height="92" rx="14"/>
+      <rect x="880" width="150" height="92" rx="14"/>
+    </g>
+    <g transform="translate(28 72)" fill="#081014" opacity="0.32">
+      <rect width="70" height="10" rx="5"/>
+      <rect x="176" width="96" height="10" rx="5"/>
+      <rect x="352" width="84" height="10" rx="5"/>
+      <rect x="528" width="74" height="10" rx="5"/>
+      <rect x="704" width="92" height="10" rx="5"/>
+      <rect x="880" width="88" height="10" rx="5"/>
+    </g>
+    <g transform="translate(28 112)" fill="#ff355d">
+      <rect width="44" height="10" rx="5"/>
+      <rect x="176" width="44" height="10" rx="5"/>
+      <rect x="352" width="44" height="10" rx="5"/>
+      <rect x="528" width="44" height="10" rx="5"/>
+      <rect x="704" width="44" height="10" rx="5"/>
+      <rect x="880" width="44" height="10" rx="5"/>
+    </g>
+  </g>
+  <g transform="translate(140 690)">
+    <rect width="1080" height="96" rx="20" fill="#071019"/>
+    <text x="34" y="58" fill="#dffcff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Private templates only. No third-party profile photos or account names.</text>
+  </g>
+</svg>

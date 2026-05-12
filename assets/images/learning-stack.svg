@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="960" viewBox="0 0 1400 960" role="img" aria-labelledby="title desc">
+  <title id="title">Nooralis lesson stack</title>
+  <desc id="desc">Abstract course lesson stack with modules, worksheets, analytics, and support cards. No people, faces, or third-party accounts are shown.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071019"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22f7ff"/>
+      <stop offset="1" stop-color="#ff355d"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+  <rect width="1400" height="960" fill="url(#bg)"/>
+  <circle cx="1120" cy="160" r="210" fill="#22f7ff" opacity="0.12" filter="url(#soft)"/>
+  <circle cx="220" cy="760" r="220" fill="#ff355d" opacity="0.1" filter="url(#soft)"/>
+  <g opacity="0.28">
+    <path d="M0 140h1400M0 280h1400M0 420h1400M0 560h1400M0 700h1400M0 840h1400" stroke="#22f7ff"/>
+    <path d="M140 0v960M280 0v960M420 0v960M560 0v960M700 0v960M840 0v960M980 0v960M1120 0v960M1260 0v960" stroke="#ff355d"/>
+  </g>
+  <g transform="translate(170 120)">
+    <rect x="0" y="0" width="1060" height="720" rx="34" fill="#0b1420" stroke="#22f7ff" stroke-opacity="0.32" stroke-width="2"/>
+    <text x="58" y="82" fill="#f7fbff" font-family="Arial, sans-serif" font-size="34" font-weight="700">Course Delivery Stack</text>
+    <text x="58" y="122" fill="#98b8c3" font-family="Arial, sans-serif" font-size="20">Lessons, templates, task sheets, and support workflow</text>
+    <g transform="translate(58 180)">
+      <rect width="286" height="430" rx="24" fill="#101d2a" stroke="#22f7ff" stroke-opacity="0.28"/>
+      <text x="30" y="54" fill="#22f7ff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Modules</text>
+      <g fill="#dffcff" opacity="0.76">
+        <rect x="30" y="96" width="180" height="14" rx="7"/>
+        <rect x="30" y="144" width="210" height="14" rx="7"/>
+        <rect x="30" y="192" width="150" height="14" rx="7"/>
+        <rect x="30" y="240" width="205" height="14" rx="7"/>
+        <rect x="30" y="288" width="170" height="14" rx="7"/>
+        <rect x="30" y="336" width="216" height="14" rx="7"/>
+      </g>
+      <g fill="#ff355d">
+        <circle cx="236" cy="103" r="7"/>
+        <circle cx="236" cy="151" r="7"/>
+        <circle cx="236" cy="199" r="7"/>
+        <circle cx="236" cy="247" r="7"/>
+        <circle cx="236" cy="295" r="7"/>
+        <circle cx="236" cy="343" r="7"/>
+      </g>
+    </g>
+    <g transform="translate(392 180)">
+      <rect width="286" height="430" rx="24" fill="#101d2a" stroke="#22f7ff" stroke-opacity="0.28"/>
+      <text x="30" y="54" fill="#22f7ff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Templates</text>
+      <rect x="32" y="90" width="222" height="72" rx="16" fill="#17293a"/>
+      <rect x="32" y="190" width="222" height="72" rx="16" fill="#17293a"/>
+      <rect x="32" y="290" width="222" height="72" rx="16" fill="#17293a"/>
+      <rect x="58" y="116" width="112" height="12" rx="6" fill="#77ff91"/>
+      <rect x="58" y="216" width="136" height="12" rx="6" fill="#ffd166"/>
+      <rect x="58" y="316" width="98" height="12" rx="6" fill="#ff355d"/>
+    </g>
+    <g transform="translate(726 180)">
+      <rect width="286" height="430" rx="24" fill="#101d2a" stroke="#22f7ff" stroke-opacity="0.28"/>
+      <text x="30" y="54" fill="#22f7ff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Review</text>
+      <path d="M58 336V142M116 336V218M174 336V104M232 336V168" stroke="url(#accent)" stroke-width="28" stroke-linecap="round"/>
+      <path d="M42 346h208" stroke="#39586a" stroke-width="2"/>
+      <rect x="42" y="88" width="176" height="12" rx="6" fill="#dffcff" opacity="0.42"/>
+    </g>
+  </g>
+</svg>

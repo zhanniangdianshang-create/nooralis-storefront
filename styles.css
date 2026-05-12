@@ -190,7 +190,7 @@ textarea {
   padding: clamp(50px, 7vw, 92px) clamp(20px, 6vw, 88px);
   color: var(--white);
   background-color: var(--night);
-  background-image: url("tiktok_front.png");
+  background-image: url("assets/images/course-backdrop.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -2620,12 +2620,12 @@ body.course-page {
   overflow: hidden;
   color: #f7fbff;
   background:
-    linear-gradient(90deg, rgba(5, 8, 13, 0.92), rgba(5, 8, 13, 0.72) 48%, rgba(5, 8, 13, 0.34)),
+    linear-gradient(90deg, rgba(5, 8, 13, 0.99) 0%, rgba(5, 8, 13, 0.97) 45%, rgba(5, 8, 13, 0.78) 72%, rgba(5, 8, 13, 0.86) 100%),
     linear-gradient(0deg, rgba(255, 53, 93, 0.12), rgba(34, 247, 255, 0.08)),
-    url("tiktok_front.png");
-  background-position: center;
+    url("assets/images/course-backdrop.svg");
+  background-position: right center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: auto 100%;
 }
 
 .course-hero::after {

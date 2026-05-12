@@ -4,6 +4,8 @@ node_modules/
 npm-debug.log*
 .DS_Store
 screenshot-*.png
+douyin_*.png
+tiktok_*.png
 paypal-*.png
 paypal-*.json
 paypal-*.err
